@@ -1,0 +1,21 @@
+
+
+Steps till end:
+
+1. figure out gyro/ aceelerometer
+
+2. write functions to access them 
+
+3. figure out PWM
+
+4. Run the motors with PWM
+
+5. Figure out how to combine Pilot data and sensor data
+
+6. figure out how to read pilot data
+
+7. figure out the algorythym for combining all this and outputting to the motors
+
+8. ???????figure out how to get the sensors to transmitt an interrupt in case of too far bank or pitch (maybe software inteerupt????)
+
+9. Figure out all the error routines (communication broke, strange sensor data etc)
