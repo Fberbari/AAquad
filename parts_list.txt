@@ -1,0 +1,43 @@
+1x processor: ATmega 328
+
+1x accelerometer # lis3dh
+
+1x gyroscope # l3gd20h
+
+2x 2 to 1 MUX # NC7SZ157P6X
+
+1x PWM driver # PCA9685
+
+2x Mosfet # BSS138
+
+
+1x 5v regulator # spx1117
+
+1x 3.3v regulator # spx1117
+
+
+
+7x 0.1uF capacitor 0805
+
+2x 10 uF capacitor 0805
+
+1x 10nF capacitor 0805
+
+2x led 0805
+
+2x 300 R resistor 0805
+
+3x 10k R resistor 0805
+
+
+
+8x (1x3) header pins
+
+1x (2x3) header pins
+
+1x (1x2) header pins
+
+
+
+
+
