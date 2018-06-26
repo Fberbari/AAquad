@@ -64,7 +64,7 @@ int acc_write(int reg, int data){
 	while(! (TWCR & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
 
 
-	if ( ((TWSR & 0xf8) != 0x28) ){ // comfirms that slave has received address of register and sent ACK
+	if ( ((TWSR & 0xf8) != 0x28) ){ // confirms that slave has received address of register and sent ACK
 
 		return 0; 
 	}
