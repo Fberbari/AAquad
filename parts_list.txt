@@ -1,4 +1,4 @@
-1x processor: ATmega 328
+1x processor: ATmega 328	
 
 1x accelerometer # lis3dh
 
@@ -31,11 +31,11 @@
 
 
 
-8x (1x3) header pins
+8x (1x3) breakaway header pins
 
-1x (2x3) header pins
+1x (2x3) breakaway header pins
 
-1x (1x2) header pins
+1x (1x2) breakaway header pins
 
 
 
