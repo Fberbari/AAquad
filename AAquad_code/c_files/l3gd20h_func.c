@@ -16,7 +16,7 @@ int gyro_write(int reg, int data){
 
 	TWSR &= ~( (1 << 0) | (1 << 1) );	// no prescaler (clock division)
 
-
+//////////////^ this stuff should go into a setup function
 
 	//  send Start condition
 
