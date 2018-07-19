@@ -1,3 +1,5 @@
+#include <stdfix.h>
+
 
 #ifndef CALCULATE_POSITION
 

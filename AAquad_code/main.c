@@ -93,17 +93,17 @@ int main(){
 	while(1){
 
 
-		if ( ! acc_read(ACC_OUT_X_H, acc_out_data_x) ){
+		if ( ! acc_read(ACC_OUT_X_L, acc_out_data_x) ){
 
 			continue;
 		}
 
-		if ( ! acc_read(ACC_OUT_Y_H, acc_out_data_y) ){	// accelerometer data collection
+		if ( ! acc_read(ACC_OUT_Y_L, acc_out_data_y) ){	// accelerometer data collection
 
 			continue;
 		}
 
-		if ( ! acc_read(ACC_OUT_Z_H, acc_out_data_z) ){
+		if ( ! acc_read(ACC_OUT_Z_L, acc_out_data_z) ){
 
 			continue;
 		}
@@ -127,7 +127,7 @@ int main(){
 
 		x_pos = calculate_position(gyro_out_data_x, acc_out_data_x);
 		y_pos = calculate_position(gyro_out_data_y, acc_out_data_y);	// raw data gets computed into a usable position
-		z_pos = calculate_position(gyro_out_data_z, acc_out_data_z);
+		z_pos = calculate_position(gyro_out_data_z, acc_out_data_z);	// uses fixed point math
 
 
 
