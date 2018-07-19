@@ -1,88 +1,149 @@
 
-#include "avr_compiler.h"
+#include "header_files/calculate_position.h"
+
+#include "header_files/encode_to_motors.h"
+
+#include "header_files/init_extern_ints.h"
+
+#include "header_files/init_free_timer.h"
+
+#include "header_files/init_mux_timer.h"
 
 #include "header_files/l3gd20h_func.h"
 
 #include "header_files/lis3dh_func.h"
 
-#define 	F_CPU   1000000UL
 
-#include <util/delay.h>
+#include "header_files/pass_to_pwm_chip.h"
+
+#include "header_files/simple_pid.h"
+
 
 #include <avr/interrupt.h>
 
+#include <stdint.h>
+
+#define 	F_CPU   8000000UL
+
+#include "header_files/macros/*"
 
 
-						// This code should transmit accelerometer data to some led's.
+	// this group of globals will hold all the info that the pilot may request.
+	volatile uint8_t requested_throttle_pos = 0; 
+	volatile uint8_t requested_aileron_pos = 0; 
+	volatile uint8_t requested_elevator_pos = 0; 
+	volatile uint8_t requested_rudder_pos = 0; 
 
-void Error(void);
+	// this group of globals are available to store timer data on the rising edge, so as to compute dutycycle
+	extern volatile uint8_t temp_timer_throttle = 0; 
+	extern volatile uint8_t temp_timer_aileron = 0; 
+	extern volatile uint8_t temp_timer_elevator = 0; 
+	extern volatile uint8_t temp_timer_rudder = 0; 
 
-
-int var = 0;
 
 
 int main(){
 
-/*
-sei(); // enable global interupts
+	uint8_t success; 
+	uint8_t x_pos;
+	uint8_t y_pos;
+	uint8_t z_pos;
+	uint8_t required_x_motion;
+	uint8_t required_y_motion;
+	uint8_t motors[4];
 
-PRR &= ~(1 << PRADC); // provide power to the ADC's
+	uint8_t* gyro_out_data_x;
+	uint8_t* gyro_out_data_y;
+	uint8_t* gyro_out_data_z;
 
-ADCSRA |= (1 << ADEN);	// enable the ADC's
+	uint8_t* acc_out_data_x;
+	uint8_t* acc_out_data_y;
+	uint8_t* acc_out_data_z;
 
-ADMUX |= (1 << REFS0);// comparison voltage
+	sei();	// enable interrupts
 
-// ADC 0 is the name of the game
+	init_mux_timer();
 
+	init_free_timer();
 
+	init_extern_ints();
 
-ADMUX |= (1 << ADLAR);// left adjust
-
-ADCSRA |= (1 << ADIE); // enable ADC Interrupt
-
-ADCSRA |= (1 << ADPS2);	// run at 62 KHz
-
-ADCSRA |= (1 << ADSC); // start conversion
-
-*/
-
-
-
-
-DDRB = 0xff;
+	pid_set_vars(kp, kd);
 
 
+	success = gyro_write(GYRO_CTRL1, 0x8f);	// all axis enabled, data refresh at 400 Hz
 
-TCCR1B |= ( (1 << WGM13) | (1 << WGM12) | (1 << CS10) );		// selecting fast PWM mode (counts up till selected value then resets)
+	if (! success){
 
-TCCR1A |= ((1 << WGM11)| (1<<COM1A1) | (1<<COM1A0));	// set inverting mode fast pwm
+		error();
+	}
+
+	success = acc_write(ACC_CTRL_REG1, 0x77);	// all axis enabled, data refresh at 400 Hz
+
+	if (! success){
+
+		error();
+	}
 
 
-ICR1 = 19999;
-
-OCR1A = 16000;
 
 
-	while (1){ /*
 
-		while (OCR1A > 17600){
 
-		OCR1A -= 10;
+	while(1){
 
-		_delay_ms(100);
 
+		if ( ! acc_read(ACC_OUT_X_H, acc_out_data_x) ){
+
+			continue;
 		}
 
-		while (OCR1A < 19500){
+		if ( ! acc_read(ACC_OUT_Y_H, acc_out_data_y) ){	// accelerometer data collection
 
-		OCR1A += 10;
+			continue;
+		}
 
-		_delay_ms(100);
+		if ( ! acc_read(ACC_OUT_Z_H, acc_out_data_z) ){
 
-		}*/
-	
+			continue;
+		}
+
+
+
+		if ( ! gyro_read(GYRO_OUT_X_H, gyro_out_data_x) ){
+
+			continue;
+		}
+		if ( ! gyro_read(GYRO_OUT_Y_H, gyro_out_data_y) ){	// gyroscope data collection
+
+			continue;
+		}
+		if ( ! gyro_read(GYRO_OUT_Z_H, gyro_out_data_z) ){
+
+			continue;
+		}
+
+
+
+		x_pos = calculate_position(gyro_out_data_x, acc_out_data_x);
+		y_pos = calculate_position(gyro_out_data_y, acc_out_data_y);	// raw data gets computed into a usable position
+		z_pos = calculate_position(gyro_out_data_z, acc_out_data_z);
+
+
+
+		required_x_motion = pid_compute_x(x_pos, requested_aileron_pos);
+		required_y_motion = pid_compute_y(y_pos, requested_elevator_pos);	// the pid algorythim computes the required strength of each pair of motors.
+
+
+		encode_to_motors(motors, required_x_motion, required_y_motion, success);// coverts the processed data into individual motor instructions
+
+		if (success){
+
+			pass_to_pwm_chip(motors);// final results get passed to the chip and eventually to the esc's
+		}
 
 	}
+
 
 		return 0;
 
@@ -90,33 +151,91 @@ OCR1A = 16000;
 
 
 
-void Error(void){
+
+	
+// Note that there is a strong probability that INT0 and INT1 will fire at the same clock cycle. That should be fine as the routines are short and one will just be executed after the other
+
+
+ISR(INT0_vect){
+
+	if (PIND == (PIND | (1 << 2))){		// mux has a control of 1 (reading rudder channel)
 
 
 
-		PORTB |= (1 << 1);
+		if ( ((TCNT1H << 8) + TCNT1L) < temp_timer_rudder){	// timer overflow
 
-		while(1);
+			requested_rudder_pos = 0xffff- temp_timer_rudder + (TCNT1H << 8) + TCNT1L;
+		} 
+
+		else{
+			
+			requested_rudder_pos = (TCNT1H << 8) + TCNT1L - temp_timer_rudder;
+		}
 
 
-	// this function should only be called if uC has lost contact with the gyroscope or accelerometer
-
-	// it should deploy the parashute.
+	}
 
 
 
-return;
+	else{	//mux has a control of 0 (reading elevator channel)
 
+
+
+		if ( ((TCNT1H << 8) + TCNT1L) < temp_timer_elevator){	// timer overflow
+
+			requested_elevator_pos = 0xffff- temp_timer_elevator + (TCNT1H << 8) + TCNT1L;
+		} 
+
+		else{
+			
+			requested_elevator_pos = (TCNT1H << 8) + TCNT1L - temp_timer_elevator;
+		}
+
+
+	}
 
 }
 
-ISR(ADC_vect){
 
-	var = (100 * ADCH);
 
-	ADCSRA |= (1 << ADSC); // start conversion
+ISR(INT1_vect ){
+
+	if (PIND == (PIND | (1 << 3))){		// mux has a control of 1 (reading aileron channel)
+
+
+
+		if ( TCNT1H < temp_timer_aileron){	// timer overflow
+
+			requested_aileron_pos = 0xff- temp_timer_aileron + TCNT1H ;
+		} 
+
+		else{
+			
+			requested_aileron_pos = TCNT1H - temp_timer_aileron;
+		}
+
+
+	}
+
+
+
+	else{	//mux has a control of 0 (reading throttle channel)
+
+
+
+		if ( TCNT1H < temp_timer_throttle){	// timer overflow
+
+			requested_throttle_pos = 0xff- temp_timer_throttle + TCNT1H ;
+		} 
+
+		else{
+			
+			requested_throttle_pos = TCNT1H - temp_timer_throttle;
+		}
+
+
+	}
 
 
 }
-
 

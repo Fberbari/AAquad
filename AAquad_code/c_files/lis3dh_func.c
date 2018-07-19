@@ -55,7 +55,7 @@ int acc_write(int reg, int data){
 
 
 
-	// send (bit that determines wether read once or multiple times (1 for multiple)) + address of register to be read
+	// send (bit that determines wether read once or multiple times (1 for multiple)) + address of register to be written
 
 	TWDR = reg; //  ( only one byte to be written)
 
@@ -135,7 +135,7 @@ int acc_read(int reg, int* data){
 
 	while(! (TWCR & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
 
-	if ( (TWSR & 0xf8) != 0x18){ // comfirms that slave has received address and sent ACK
+	if ( (TWSR & 0xf8) != 0x18){ // confirms that slave has received address and sent ACK
 
 		return 0; 
 	}
