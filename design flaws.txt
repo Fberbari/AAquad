@@ -1,0 +1,13 @@
+1. each voltage regulator required a 10 uF cap
+
+2. the footprints for the qfn's are far too small and the white squares are missing.
+
+3. The back fin of the power egulators should be connected to the ground plane.
+
+4. An IMU should have been used instead of a seperate acc and gyro.
+
+5. Always use an external pullup resistor for the I2C lines. DO not rely on the software
+
+6. Use the PWM pin todo mux sort of stuff.
+
+7. ALWAYS select the cheapest and least complex approach.

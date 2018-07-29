@@ -154,8 +154,8 @@ int main(){
 
 	
 // Note that there is a strong probability that INT0 and INT1 will fire at the same clock cycle. That should be fine as the routines are short and one will just be executed after the other
-
-
+// This code will remain, but will not be triggered by muxes.
+/*
 ISR(INT0_vect){
 
 	if (PIND == (PIND | (1 << 2))){		// mux has a control of 1 (reading rudder channel)
@@ -195,7 +195,6 @@ ISR(INT0_vect){
 	}
 
 }
-
 
 
 ISR(INT1_vect ){
@@ -239,3 +238,4 @@ ISR(INT1_vect ){
 
 }
 
+*/

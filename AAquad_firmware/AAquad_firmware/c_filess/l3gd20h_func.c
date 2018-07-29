@@ -1,14 +1,24 @@
-#include "../header_files/pass_to_pwm_chip.h"
+
+
+#include "l3gd20h_func.h"
 
 
 
+int gyro_write(int reg, int data){
 
-int pass_to_pwm_chip(int* motors){
+	//setup
 
-// this function will communicate over I2C to the pwmchip for final controll of the motors
+	PRR &= ~(1 <<  7); // ensures a clock is provided to the TWI (instead of power saver) 
 
+	TWCR &= ~(1 << TWIE); //I do not want to run interrupts here
 
-		//  send Start condition
+	TWBR = (1 << 1); // I'll run the cpu at 1 MHz, this divides the value by 2 for 50 KHZ
+
+	TWSR &= ~( (1 << 0) | (1 << 1) );	// no prescaler (clock division)
+
+//////////////^ this stuff should go into a setup function
+
+	//  send Start condition
 
 
 	TWCR |= (1 << TWEN); // The TWI process takes controll of the I/O pins
@@ -16,20 +26,19 @@ int pass_to_pwm_chip(int* motors){
 	TWCR |= ( (1 << TWSTA ) | (1 << TWINT) ); // writes the start condition on the line  and Hardware will clear this bit when ready
 
 
-	PORTB |= (1 << 1);
-
 
 	while(! (TWCR & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
 
-	if ( (TWSR & 0xf8) != 0x08){ // comfirms that status is infact start condition has gone through
+	if ( (TWSR & 0xf8) != 0x08){ // confirms that status is infact start condition has gone through
 
 		return 0; 
 	}
 
 
+
 	// send slave address + write bit
 
-	TWDR = 0x9E;	// slave address + write (10011110)
+	TWDR = 0xD6;	// slave address + write (connected to VCC) (11010110)
 
 	TWCR = ( (1 << TWINT) | (1 << TWEN) );
 
@@ -38,18 +47,14 @@ int pass_to_pwm_chip(int* motors){
 
 	if ( (TWSR & 0xf8) != 0x18){ // confirms that slave has received address and sent ACK
 
-		return 0;
+		return 0; 
 	}
 
 
 
-	return 1;
-}
+	// send (bit that determines wether read once or multiple times (1 for multiple)) + address of register to be read
 
-
-	// send (bit that determines wether read once or multiple times (1 for multiple)) + address of register to be written
-
-	TWDR = reg; //  ( only one byte to be written)
+	TWDR = reg;  // ( only one byte to be read)
 
 	TWCR = ( (1 << TWINT) | (1 << TWEN) );
 
@@ -71,7 +76,7 @@ int pass_to_pwm_chip(int* motors){
 	
 	while(! (TWCR & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
 
-	if ( ((TWSR & 0xf8) != 0x28) ){ // comfirms that slave has received address of register and sent ACK
+	if ( ((TWSR & 0xf8) != 0x28) ){ // confirms that slave has received address of register and sent ACK
 
 		return 0; 
 	}
@@ -87,7 +92,8 @@ int pass_to_pwm_chip(int* motors){
 
 
 
-int acc_read(int reg, int* data){
+
+int gyro_read(int reg, int* data){
 
 	PRR &= ~(1 <<  7); // ensures a clock is provided to the TWI (instead of power saver) 
 
@@ -120,14 +126,14 @@ int acc_read(int reg, int* data){
 
 	// send slave address + write bit
 
-	TWDR = 0x32;	// slave address + write (connected to VCC) (11010110)
+	TWDR = 0xD6;	// slave address + write (connected to VCC) (11010110)
 
 	TWCR = ( (1 << TWINT) | (1 << TWEN) );
 
 
 	while(! (TWCR & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
 
-	if ( (TWSR & 0xf8) != 0x18){ // confirms that slave has received address and sent ACK
+	if ( (TWSR & 0xf8) != 0x18){ // comfirms that slave has received address and sent ACK
 
 		return 0; 
 	}
@@ -166,7 +172,7 @@ int acc_read(int reg, int* data){
 
 	// send slave address + read bit
 
-	TWDR = 0x33;	// slave address + read (connected to ground) (00110001)
+	TWDR = 0xD7;	// slave address + read (connected to Vcc) (00110001)
 
 	TWCR = ((1 << TWEN) | (1 << TWINT)); //  enable and clear the flag  
 
@@ -189,7 +195,7 @@ int acc_read(int reg, int* data){
 
 	if ( (TWSR & 0xf8) != 0x58){ // confirms that slave has understood that data has been recived and NACK was sent out
 
-		Error(); 
+		return 0;
 	}
 
 	*data = TWDR;
@@ -209,9 +215,6 @@ return 1;
 
 
 }
-
-
-
 
 
 

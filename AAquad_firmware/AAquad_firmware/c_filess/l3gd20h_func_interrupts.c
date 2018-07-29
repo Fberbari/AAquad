@@ -1,93 +1,43 @@
-#include "../header_files/pass_to_pwm_chip.h"
+
+#include "l3gd20h_func.h"
+
+
+static int read_0_write_1;
+
+
+int gyro_write(int reg, int data){
+
+	read_0_write_1 = 1;
+
+	//setup
+
+	PRR &= ~(1 <<  7); // ensures a clock is provided to the TWI (instead of power saver) 
+
+	TWCR |= (1 << TWIE); // Interrupts!
+
+	TWBR = (1 << 1); // I'll run the cpu at 1 MHz, this divides the value by 2 for 50 KHZ
+
+	TWSR &= ~( (1 << 0) | (1 << 1) );	// no prescaler (clock division)
 
 
 
-
-int pass_to_pwm_chip(int* motors){
-
-// this function will communicate over I2C to the pwmchip for final controll of the motors
-
-
-		//  send Start condition
+	//  send Start condition
 
 
 	TWCR |= (1 << TWEN); // The TWI process takes controll of the I/O pins
 
 	TWCR |= ( (1 << TWSTA ) | (1 << TWINT) ); // writes the start condition on the line  and Hardware will clear this bit when ready
 
-
-	PORTB |= (1 << 1);
-
-
-	while(! (TWCR & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
-
-	if ( (TWSR & 0xf8) != 0x08){ // comfirms that status is infact start condition has gone through
-
-		return 0; 
-	}
-
-
-	// send slave address + write bit
-
-	TWDR = 0x9E;	// slave address + write (10011110)
-
-	TWCR = ( (1 << TWINT) | (1 << TWEN) );
-
-
-	while(! (TWCR & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
-
-	if ( (TWSR & 0xf8) != 0x18){ // confirms that slave has received address and sent ACK
-
-		return 0;
-	}
-
-
-
-	return 1;
-}
-
-
-	// send (bit that determines wether read once or multiple times (1 for multiple)) + address of register to be written
-
-	TWDR = reg; //  ( only one byte to be written)
-
-	TWCR = ( (1 << TWINT) | (1 << TWEN) );
-
-	while(! (TWCR & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
-
-
-	if ( ((TWSR & 0xf8) != 0x28) ){ // confirms that slave has received address of register and sent ACK
-
-		return 0; 
-	}
-
-
-
-	// send databyte
-
-	TWDR = data;
-
-	TWCR = ((1 << TWINT) | (1 << TWEN));
-	
-	while(! (TWCR & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
-
-	if ( ((TWSR & 0xf8) != 0x28) ){ // comfirms that slave has received address of register and sent ACK
-
-		return 0; 
-	}
-
-	// stop
-
-	TWCR |= ( (1 << TWEN) | (1 << TWINT) | (1 << TWSTO) ); 
-
-	return 1;
-
-
+	return 0;
 }
 
 
 
-int acc_read(int reg, int* data){
+
+int gyro_read(int reg, int* data){
+
+	read_0_write_1 = 0;
+
 
 	PRR &= ~(1 <<  7); // ensures a clock is provided to the TWI (instead of power saver) 
 
@@ -110,7 +60,7 @@ int acc_read(int reg, int* data){
 	PORTB |= (1 << 1);
 
 
-	while(! (TWCR & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
+	//while(! (TWCR & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
 
 	if ( (TWSR & 0xf8) != 0x08){ // comfirms that status is infact start condition has gone through
 
@@ -120,14 +70,14 @@ int acc_read(int reg, int* data){
 
 	// send slave address + write bit
 
-	TWDR = 0x32;	// slave address + write (connected to VCC) (11010110)
+	TWDR = 0xD6;	// slave address + write (connected to VCC) (11010110)
 
 	TWCR = ( (1 << TWINT) | (1 << TWEN) );
 
 
 	while(! (TWCR & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
 
-	if ( (TWSR & 0xf8) != 0x18){ // confirms that slave has received address and sent ACK
+	if ( (TWSR & 0xf8) != 0x18){ // comfirms that slave has received address and sent ACK
 
 		return 0; 
 	}
@@ -166,7 +116,7 @@ int acc_read(int reg, int* data){
 
 	// send slave address + read bit
 
-	TWDR = 0x33;	// slave address + read (connected to ground) (00110001)
+	TWDR = 0xD7;	// slave address + read (connected to Vcc) (00110001)
 
 	TWCR = ((1 << TWEN) | (1 << TWINT)); //  enable and clear the flag  
 
@@ -189,7 +139,7 @@ int acc_read(int reg, int* data){
 
 	if ( (TWSR & 0xf8) != 0x58){ // confirms that slave has understood that data has been recived and NACK was sent out
 
-		Error(); 
+		return 0;
 	}
 
 	*data = TWDR;
@@ -209,6 +159,90 @@ return 1;
 
 
 }
+
+
+ISR(TWI_vect){
+
+
+		if (read_0_write_1 == 1){
+	
+	
+	
+	
+			static bool 0x28_was_called = false;
+	
+			switch (TWSR & 0xf8){
+	
+	
+				case 0x08 :
+	
+	
+	
+						TWDR = reg; // ( only one byte to be read)
+	
+						TWCR = ( (1 << TWINT) | (1 << TWEN) );
+	
+						break;
+	
+	
+				case 0x18 :
+	
+	
+						TWDR = reg;  // ( only one byte to be read)
+	
+						TWCR = ( (1 << TWINT) | (1 << TWEN) );
+	
+						break;
+	
+	
+				case 0x28 :
+	
+						if (0x28_was_called == false){
+	
+	
+							TWDR = data;
+	
+							TWCR = ((1 << TWINT) | (1 << TWEN));
+	
+							0x28_was_called = true;
+						}
+	
+						else{
+	
+							TWCR |= ( (1 << TWEN) | (1 << TWINT) | (1 << TWSTO) );
+	
+							0x28_was_called = false;
+						}
+	
+						break;
+	
+			}
+		}
+
+
+
+		else{
+
+
+
+
+
+
+		}
+	
+	
+	
+	
+	
+}
+
+
+
+
+
+
+
+
 
 
 

@@ -1,0 +1,79 @@
+1. upon connecting the battery, it heats up like hell. 
+	-measuring the voltage on the battery shows that there is a short between power and griund
+	-measuring the voltage at the terminals of the regulators shows they are not delvering proper output
+
+		hypothese:
+
+			-the heat damaged the voltage regulators (not correct)
+			- the regulators cannot handle the load (not correct)
+			- there is some kind of short between power and ground.
+				- this short is inhearent in the traces (not correct)
+				-this short has something to do with the components (?????)
+
+
+				tests:
+
+					- remove the regulators and test each one seperately
+					- apply an external ower source to the pcb
+					- apply an external power source to a blank pcb
+					- take off components little by little
+
+		results:
+
+			- VCC's of both power regulators are connected via a relatively high (but non 0) resistance
+			- desoldering the regulators shows that that resistance mentioned directly above still exists.It is massive, however, I am not convinced 	that is the problem
+			- Both regulators function properly.
+			- the regulator handles a motor without problem
+			- When an external 5V is applied, the voltage still colapses.
+			- When a blank pcb is connected to power, there is no collapse.
+			-The servo chip functionsproperly, it is not what has blown up
+
+	********After connecting a couple AA batteries in the goal of seeing what would get hot, I saw some smoke. After that, power was no longer being 	shorted. Communication with the atmega worked fine.
+
+
+
+2. TWINT bit is not being set when the microcontroller is connected to the board.
+	-
+
+		Hypothese:
+			-Something is wrong with the level shifting hadware
+			-Something is wrong with one of the sensors or with the servo chip
+
+		tests:
+
+			- I am going to split the connections of the servo chip and the sensors apart and test them seperately
+			- Now that I have some hope for the servo chip, I will call it's adress
+			- try talking to the acc and gyro seperately.
+
+
+		results:
+
+			-testing the acc/gyro system by itself, the problem persists
+			-testing the servo chip by itself functions.
+			-Calling the servo chip's adress functions aswell, I confirm it works fine. 
+
+
+
+3. Having th atmega 328pb instead of atmega 328
+	-2 TWI interfaces
+	- satus code after a start is transmitted shows that sla+r has been transmitted.
+
+
+
+
+4. Neither one of the muxes seems to be working.
+	
+	status: resolved. I've decided to use only the interrupts and pin change interrupts
+
+
+
+	Software:
+
+1. header file not included for atmega 328pb
+	-See if you cant modify the one for atmega 328
+
+	status: resolved. An appropriate header filewas found on github and added to the project
+
+
+
+

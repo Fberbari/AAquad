@@ -1,14 +1,24 @@
-#include "../header_files/pass_to_pwm_chip.h"
+
+
+#include "lis3dh_func.h"
 
 
 
+int acc_write(int reg, int data){
 
-int pass_to_pwm_chip(int* motors){
+	//setup
 
-// this function will communicate over I2C to the pwmchip for final controll of the motors
+	PRR &= ~(1 <<  7); // ensures a clock is provided to the TWI (instead of power saver) 
+
+	TWCR &= ~(1 << TWIE); // no need for interrupts just yet
+
+	TWBR = (1 << 1); // I'll run the cpu at 1 MHz, this divides the value by 2 for 50 KHZ
+
+	TWSR &= ~( (1 << 0) | (1 << 1) );	// no prescaler (clock division)
 
 
-		//  send Start condition
+
+	//  send Start condition
 
 
 	TWCR |= (1 << TWEN); // The TWI process takes controll of the I/O pins
@@ -27,9 +37,10 @@ int pass_to_pwm_chip(int* motors){
 	}
 
 
+
 	// send slave address + write bit
 
-	TWDR = 0x9E;	// slave address + write (10011110)
+	TWDR = 0x32;	// slave address + write (connected to VCC) (00110010)
 
 	TWCR = ( (1 << TWINT) | (1 << TWEN) );
 
@@ -42,9 +53,6 @@ int pass_to_pwm_chip(int* motors){
 	}
 
 
-
-	return 1;
-}
 
 
 	// send (bit that determines wether read once or multiple times (1 for multiple)) + address of register to be written
