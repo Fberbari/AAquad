@@ -138,6 +138,12 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="c_files\init_free_timer.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="c_files\init_ints.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="c_files\init_mux_timer.c">
       <SubType>compile</SubType>
     </Compile>
@@ -153,10 +159,10 @@
     <Compile Include="header_files\encode_to_motors.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="header_files\init_extern_ints.h">
+    <Compile Include="header_files\init_free_timer.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="header_files\init_free_timer.h">
+    <Compile Include="header_files\init_ints.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="header_files\init_mux_timer.h">

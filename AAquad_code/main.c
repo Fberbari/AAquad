@@ -155,87 +155,37 @@ int main(){
 	
 // Note that there is a strong probability that INT0 and INT1 will fire at the same clock cycle. That should be fine as the routines are short and one will just be executed after the other
 // This code will remain, but will not be triggered by muxes.
-/*
-ISR(INT0_vect){
 
-	if (PIND == (PIND | (1 << 2))){		// mux has a control of 1 (reading rudder channel)
+ISR(INT0_vect ){
 
+			if ( TCNT1H < temp_timer_throttle){	// timer overflow
 
-
-		if ( ((TCNT1H << 8) + TCNT1L) < temp_timer_rudder){	// timer overflow
-
-			requested_rudder_pos = 0xffff- temp_timer_rudder + (TCNT1H << 8) + TCNT1L;
-		} 
+			requested_throttle_pos = 0xff- temp_timer_throttle + TCNT1H ;
+		}
 
 		else{
 			
-			requested_rudder_pos = (TCNT1H << 8) + TCNT1L - temp_timer_rudder;
+			requested_throttlr_pos = TCNT1H - temp_timer_throttle;
 		}
-
-
-	}
-
-
-
-	else{	//mux has a control of 0 (reading elevator channel)
-
-
-
-		if ( ((TCNT1H << 8) + TCNT1L) < temp_timer_elevator){	// timer overflow
-
-			requested_elevator_pos = 0xffff- temp_timer_elevator + (TCNT1H << 8) + TCNT1L;
-		} 
-
-		else{
-			
-			requested_elevator_pos = (TCNT1H << 8) + TCNT1L - temp_timer_elevator;
-		}
-
-
-	}
+				
+		temp_timer_throttle = TCNT1H;
 
 }
 
 
 ISR(INT1_vect ){
 
-	if (PIND == (PIND | (1 << 3))){		// mux has a control of 1 (reading aileron channel)
-
-
-
-		if ( TCNT1H < temp_timer_aileron){	// timer overflow
+			if ( TCNT1H < temp_timer_aileron){	// timer overflow
 
 			requested_aileron_pos = 0xff- temp_timer_aileron + TCNT1H ;
-		} 
+		}
 
 		else{
 			
 			requested_aileron_pos = TCNT1H - temp_timer_aileron;
 		}
-
-
-	}
-
-
-
-	else{	//mux has a control of 0 (reading throttle channel)
-
-
-
-		if ( TCNT1H < temp_timer_throttle){	// timer overflow
-
-			requested_throttle_pos = 0xff- temp_timer_throttle + TCNT1H ;
-		} 
-
-		else{
-			
-			requested_throttle_pos = TCNT1H - temp_timer_throttle;
-		}
-
-
-	}
-
+		
+		temp_timer_aileron = TCNT1H;
 
 }
 
-*/

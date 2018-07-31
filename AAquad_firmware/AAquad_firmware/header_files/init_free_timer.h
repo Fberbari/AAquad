@@ -1,3 +1,5 @@
+#include <avr/io.h>
+
 #ifndef INIT_FREE_TIMER
 
 #define INIT_FREE_TIMER
