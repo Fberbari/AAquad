@@ -76,4 +76,36 @@
 
 
 
+2. The init_extern_ints function stops the who;e program if I try to enable the external int 0;
+
+	-resolved. No interrupt service routine for int 0 was created, so there was npthing to execute, the program went into error.
+
+3. MY pwm read algorythim does not deliver anything.
+	
+	hypotheses:
+		- interrupt not firing
+		- timer not functioning (correct )
+
+
+	tests:
+		- the interrupt is firing at the right time
+
+		status: resolved. I was writing to the wrong register when trying to init the timer. Also, I was misreading the 16 byte register, now I can read the pwm (note, at the time of writing, I am reading with the timer 0)
+
+4. PWM is very innacurate ( ~20% off on readings)
+
+	
+	hypotheses:
+		- The 8 bit time is not enough
+
+	status: resolved. I just increased the prescaler and the timer becomes farmore accurate (although of course I lose some resolution).
+
+5. EVery couple read cycles, the value read by PWM is off by quite a bit (though always by a constant ammount)
+
+	hypotheses:
+
+		-Something to do with timer overrun.
+
+	Status: Unresolved but most likely will be ignored as values can be rejected by the software if thy are implausible.
+
 

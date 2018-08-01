@@ -21,7 +21,7 @@ main.d main.o: .././main.c \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\math.h \
  ../header_files/lis3dh_func.h ../header_files/avr_compiler.h \
  ../header_files/init_mux_timer.h ../header_files/init_free_timer.h \
- ../header_files/macros/acc_defines.h
+ ../header_files/init_ints.h ../header_files/macros/acc_defines.h
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\io.h:
 
@@ -70,5 +70,7 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 ../header_files/init_mux_timer.h:
 
 ../header_files/init_free_timer.h:
+
+../header_files/init_ints.h:
 
 ../header_files/macros/acc_defines.h:

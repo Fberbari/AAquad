@@ -1,4 +1,3 @@
-
 #include <avr/io.h>
 
 #ifndef INIT_INTS

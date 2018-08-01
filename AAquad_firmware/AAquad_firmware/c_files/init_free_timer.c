@@ -8,5 +8,5 @@ void init_free_timer(){
 
 	// by default the timer is set to normal mode
 
-	TCNT1H |= (1 << CS11);	// timer will run with an x8 prescaler 
+	TCCR1B |= ( (1 <<CS10));	// timer will run with an 64x prescaler 
 }

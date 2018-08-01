@@ -11,3 +11,5 @@
 6. Use the PWM pin todo mux sort of stuff.
 
 7. ALWAYS select the cheapest and least complex approach.
+
+8. The input capture unit (ICU) of the timers should be used to read pwm. 
