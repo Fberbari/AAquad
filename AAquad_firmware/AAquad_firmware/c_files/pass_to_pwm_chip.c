@@ -1,7 +1,10 @@
 #include "../header_files/pass_to_pwm_chip.h"
 
 int start();
+int send_slave();
+int send_reg(int reg);
 int send(int data);
+void stop();
 
 
 int pass_to_pwm_chip(int* motors){
@@ -9,7 +12,6 @@ int pass_to_pwm_chip(int* motors){
 // this function will communicate over I2C to the pwmchip for final controll of the motors
 
 
-	translate_motors(motors);
 
 
 
@@ -28,7 +30,7 @@ int pass_to_pwm_chip(int* motors){
 		return 0;
 	}
 
-	if( (send() & send() & send() & send()) == 0){ //ON_L, ON_H, OFF_L, OFF_H
+		if( (send(0x20) & send(0x3) & send(0xB0) & send(0x4)) == 0){ //ON_L, ON_H, OFF_L, OFF_H
 
 		return 0;
 	}
@@ -38,7 +40,7 @@ int pass_to_pwm_chip(int* motors){
 
 
 
-
+/*
 
 
 
@@ -58,7 +60,7 @@ int pass_to_pwm_chip(int* motors){
 	}
 
 
-	if( (send() & send() & send() & send()) == 0){ //ON_L, ON_H, OFF_L, OFF_H
+	if( (send(0x20) & send(0x3) & send(0xB0) & send(0x4)) == 0){ //ON_L, ON_H, OFF_L, OFF_H
 
 		return 0;
 	}
@@ -156,7 +158,7 @@ int pass_to_pwm_chip(int* motors){
 
 
 
-
+*/
 
 
 	return 1;
@@ -166,10 +168,7 @@ int pass_to_pwm_chip(int* motors){
 
 
 
-void translate_motors(int* motors){
 
-
-}
 
 
 
@@ -179,17 +178,17 @@ void translate_motors(int* motors){
 
 int start(){
 
-	TWCR |= (1 << TWEN); // The TWI process takes controll of the I/O pins
+	TWCR0 |= (1 << TWEN); // The TWI process takes controll of the I/O pins
 
-	TWCR |= ( (1 << TWSTA ) | (1 << TWINT) ); // writes the start condition on the line  and Hardware will clear this bit when ready
+	TWCR0 |= ( (1 << TWSTA ) | (1 << TWINT) ); // writes the start condition on the line  and Hardware will clear this bit when ready
 
 
 	PORTB |= (1 << 1);
 
 
-	while(! (TWCR & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
+	while(! (TWCR0 & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
 
-	if ( (TWSR & 0xf8) != 0x08){ // comfirms that status is infact start condition has gone through
+	if ( (TWSR0 & 0xf8) != 0x08){ // comfirms that status is infact start condition has gone through
 
 		return 0; 
 	}
@@ -202,14 +201,14 @@ int send_slave(){
 
 	// send slave address + write bit
 
-	TWDR = 0x9E;	// slave address + write (10011110)
+	TWDR0 = 0x9E;	// slave address + write (10011110)
 
-	TWCR = ( (1 << TWINT) | (1 << TWEN) );
+	TWCR0 = ( (1 << TWINT) | (1 << TWEN) );
 
 
-	while(! (TWCR & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
+	while(! (TWCR0 & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
 
-	if ( (TWSR & 0xf8) != 0x18){ // confirms that slave has received address and sent ACK
+	if ( (TWSR0 & 0xf8) != 0x18){ // confirms that slave has received address and sent ACK
 
 		return 0;
 	}
@@ -223,14 +222,14 @@ int send_reg(int reg){
 
 	// send  address of register to be written
 
-	TWDR = reg; //  LED4_ON_L
+	TWDR0 = reg; 
 
-	TWCR = ( (1 << TWINT) | (1 << TWEN) );
+	TWCR0 = ( (1 << TWINT) | (1 << TWEN) );
 
-	while(! (TWCR & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
+	while(! (TWCR0 & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
 
 
-	if ( ((TWSR & 0xf8) != 0x28) ){ // confirms that slave has received address of register and sent ACK
+	if ( ((TWSR0 & 0xf8) != 0x28) ){ // confirms that slave has received address of register and sent ACK
 
 		return 0; 
 	}
@@ -245,13 +244,13 @@ int send_reg(int reg){
 
 int send(int data){
 
-	TWDR = data;
+	TWDR0 = data;
 
-	TWCR = ((1 << TWINT) | (1 << TWEN));
+	TWCR0 = ((1 << TWINT) | (1 << TWEN));
 	
-	while(! (TWCR & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
+	while(! (TWCR0 & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
 
-	if ( ((TWSR & 0xf8) != 0x28) ){ // comfirms that slave has accepted data and sent ACK
+	if ( ((TWSR0 & 0xf8) != 0x28) ){ // comfirms that slave has accepted data and sent ACK
 
 		return 0; 
 	}
@@ -264,7 +263,7 @@ int send(int data){
 void stop(){
 
 
-	TWCR |= ( (1 << TWEN) | (1 << TWINT) | (1 << TWSTO) ); 
+	TWCR0 |= ( (1 << TWEN) | (1 << TWINT) | (1 << TWSTO) ); 
 
 	return;
 }

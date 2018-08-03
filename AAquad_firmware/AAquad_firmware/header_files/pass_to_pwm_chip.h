@@ -1,3 +1,5 @@
+#include <avr/io.h>
+
 #ifndef PASS_TO_PWM_CHIP
 
 #define PASS_TO_PWM_CHIP

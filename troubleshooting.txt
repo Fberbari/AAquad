@@ -109,3 +109,29 @@
 	Status: Unresolved but most likely will be ignored as values can be rejected by the software if thy are implausible.
 
 
+6. TWINT bit not being set after start condition is sent
+
+	hypotheses:
+
+		-pullup rsistors not set.
+		-prescalers fucked up
+
+	results:
+
+		- after pullups set, problem persists
+		- after pullups set, problem persists
+
+	status: solved. I was writing = instead of |= to the controll register and killing the TWI process by mistake
+	status: selved. WHen interacting with the TWCR, write to it in one single line of code. (use = instead of |=)
+
+7. PWM chip not outputting pwm despite accepting all data
+
+	hypotheses:
+
+		- registers are not autoincrementing
+		- ~OE bit is not configure correctly
+
+	results:
+
+		-auto increment functions
+		-set OE to 1, set OE to 0

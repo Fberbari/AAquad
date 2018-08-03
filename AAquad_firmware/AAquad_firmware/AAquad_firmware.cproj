@@ -150,6 +150,12 @@
     <Compile Include="c_files\lis3dh_func.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="c_files\pass_to_pwm_chip.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="c_files\pwm_chip_init.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="header_files\avr_compiler.h">
       <SubType>compile</SubType>
     </Compile>
@@ -181,6 +187,9 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="header_files\pass_to_pwm_chip.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="header_files\pwm_chip_init.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="header_files\simple_pid.h">
