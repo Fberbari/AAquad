@@ -1,5 +1,7 @@
 #include "../header_files/pass_to_pwm_chip.h"
 
+void decode_motors(uint8_t motor, uint8_t* motors, uint8_t* instruction);
+
 int start();
 int send_slave();
 int send_reg(int reg);
@@ -7,11 +9,14 @@ int send(int data);
 void stop();
 
 
-int pass_to_pwm_chip(int* motors){
+int pass_to_pwm_chip(uint8_t* motors){
 
 // this function will communicate over I2C to the pwmchip for final controll of the motors
 
 
+	uint8_t instruction[2];	// this array will hold the values that the decodefunction deciphers
+	
+	decode_motors(0, motors, instruction);
 
 
 
@@ -30,7 +35,7 @@ int pass_to_pwm_chip(int* motors){
 		return 0;
 	}
 
-		if( (send(0x20) & send(0x3) & send(0xB0) & send(0x4)) == 0){ //ON_L, ON_H, OFF_L, OFF_H
+		if( (send(0) & send(0) & send(instruction[0]) & send(instruction[1])) == 0){ //ON_L, ON_H, OFF_L, OFF_H
 
 		return 0;
 	}
@@ -40,7 +45,7 @@ int pass_to_pwm_chip(int* motors){
 
 
 
-/*
+
 
 
 
@@ -60,42 +65,12 @@ int pass_to_pwm_chip(int* motors){
 	}
 
 
-	if( (send(0x20) & send(0x3) & send(0xB0) & send(0x4)) == 0){ //ON_L, ON_H, OFF_L, OFF_H
+	if( (send(0) & send(0) & send(0xB0) & send(0x4)) == 0){ //ON_L, ON_H, OFF_L, OFF_H
 
 		return 0;
 	}
 
 	stop();
-
-
-
-	
-
-
-
-	if (! start() ){
-
-		return 0;
-	}
-
-	if (! send_slave() ){
-
-		return 0;
-	}
-
-	if (! send_reg(0x26) ){	//LED8_ON_L
-
-		return 0;
-	}
-
-
-	if( (send() & send() & send() & send()) == 0){ //ON_L, ON_H, OFF_L, OFF_H
-
-		return 0;
-	}
-
-	stop();
-
 
 
 	
@@ -113,13 +88,13 @@ int pass_to_pwm_chip(int* motors){
 		return 0;
 	}
 
-	if (! send_reg(0x36) ){	//LED12_ON_L
+	if (! send_reg(0x2E) ){	//LED15_ON_L
 
 		return 0;
 	}
 
 
-	if( (send() & send() & send() & send()) == 0){ //ON_L, ON_H, OFF_L, OFF_H
+	if( (send(0) & send(0) & send(0xB0) & send(0x4)) == 0){ //ON_L, ON_H, OFF_L, OFF_H
 
 		return 0;
 	}
@@ -143,13 +118,13 @@ int pass_to_pwm_chip(int* motors){
 		return 0;
 	}
 
-	if (! send_reg(0x46) ){	//LED16_ON_L
+	if (! send_reg(0x42) ){	//LED15_ON_L
 
 		return 0;
 	}
 
 
-	if( (send() & send() & send() & send()) == 0){ //ON_L, ON_H, OFF_L, OFF_H
+	if( (send(0) & send(0) & send(0xB0) & send(0x4)) == 0){ //ON_L, ON_H, OFF_L, OFF_H
 
 		return 0;
 	}
@@ -158,7 +133,6 @@ int pass_to_pwm_chip(int* motors){
 
 
 
-*/
 
 
 	return 1;
@@ -172,7 +146,19 @@ int pass_to_pwm_chip(int* motors){
 
 
 
-
+void decode_motors(uint8_t motor, uint8_t* motors, uint8_t*instruction){
+	
+	uint16_t temp = motors[motor] * 205;	// the actualslope of this curve is 2.05, 100 times larger prevents the .05from falling off
+	
+	temp = ( temp / 100 ) + 205;	// 205 is the value corresponding to 0 for the esc
+	
+	instruction[0] = ( temp & 0xff );	// conserves only the low byte
+	
+	instruction[1] = (temp >> 8);	// conserves only the high half-byte
+	
+	return;
+	
+}
 
 
 
@@ -238,8 +224,6 @@ int send_reg(int reg){
 
 
 }
-
-
 
 
 int send(int data){

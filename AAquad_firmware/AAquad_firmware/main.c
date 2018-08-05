@@ -140,43 +140,6 @@ pwm_chip_init();
 pass_to_pwm_chip(motors);
 
 
-
-
-
-read(0x07);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 DDRB |= (1 << 1);
 PORTB |= (1 << 0);
 
