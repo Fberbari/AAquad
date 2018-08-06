@@ -2,11 +2,6 @@
 
 void decode_motors(uint8_t motor, uint8_t* motors, uint8_t* instruction);
 
-int start();
-int send_slave();
-int send_reg(int reg);
-int send(int data);
-void stop();
 
 
 int pass_to_pwm_chip(uint8_t* motors){
@@ -16,9 +11,9 @@ int pass_to_pwm_chip(uint8_t* motors){
 
 	uint8_t instruction[2];	// this array will hold the values that the decodefunction deciphers
 	
+	
+	
 	decode_motors(0, motors, instruction);
-
-
 
 	if (! start() ){
 
@@ -35,7 +30,7 @@ int pass_to_pwm_chip(uint8_t* motors){
 		return 0;
 	}
 
-		if( (send(0) & send(0) & send(0xB0) & send(0x4)) == 0){ //ON_L, ON_H, OFF_L, OFF_H
+	if( (send(0) & send(0) & send(instruction[0]) & send(instruction[1]) ) == 0){ //ON_L, ON_H, OFF_L, OFF_H
 
 		return 0;
 	}
@@ -48,7 +43,8 @@ int pass_to_pwm_chip(uint8_t* motors){
 
 
 
-
+	decode_motors(1, motors, instruction);
+	
 	if (! start() ){
 
 		return 0;
@@ -65,7 +61,7 @@ int pass_to_pwm_chip(uint8_t* motors){
 	}
 
 
-	if( (send(0) & send(0) & send(0xB0) & send(0x4)) == 0){ //ON_L, ON_H, OFF_L, OFF_H
+	if( (send(0) & send(0) & send(instruction[0]) & send(instruction[1]) ) == 0){ //ON_L, ON_H, OFF_L, OFF_H
 
 		return 0;
 	}
@@ -76,7 +72,7 @@ int pass_to_pwm_chip(uint8_t* motors){
 	
 
 
-
+	decode_motors(2, motors, instruction);
 
 	if (! start() ){
 
@@ -94,7 +90,7 @@ int pass_to_pwm_chip(uint8_t* motors){
 	}
 
 
-	if( (send(0) & send(0) & send(0xB0) & send(0x4)) == 0){ //ON_L, ON_H, OFF_L, OFF_H
+	if( (send(0) & send(0) & send(instruction[0]) & send(instruction[1]) ) == 0){ //ON_L, ON_H, OFF_L, OFF_H
 
 		return 0;
 	}
@@ -107,7 +103,8 @@ int pass_to_pwm_chip(uint8_t* motors){
 
 
 
-
+	decode_motors(3, motors, instruction);
+	
 	if (! start() ){
 
 		return 0;
@@ -124,7 +121,7 @@ int pass_to_pwm_chip(uint8_t* motors){
 	}
 
 
-	if( (send(0) & send(0) & send(0xB0) & send(0x4)) == 0){ //ON_L, ON_H, OFF_L, OFF_H
+	if( (send(0) & send(0) & send(instruction[0]) & send(instruction[1]) ) == 0){ //ON_L, ON_H, OFF_L, OFF_H
 
 		return 0;
 	}
@@ -159,97 +156,3 @@ void decode_motors(uint8_t motor, uint8_t* motors, uint8_t*instruction){
 	return;
 	
 }
-
-
-
-int start(){
-
-	TWCR0 |= (1 << TWEN); // The TWI process takes controll of the I/O pins
-
-	TWCR0 |= ( (1 << TWSTA ) | (1 << TWINT) ); // writes the start condition on the line  and Hardware will clear this bit when ready
-
-
-	PORTB |= (1 << 1);
-
-
-	while(! (TWCR0 & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
-
-	if ( (TWSR0 & 0xf8) != 0x08){ // comfirms that status is infact start condition has gone through
-
-		return 0; 
-	}
-
-	return 1;
-
-}
-
-int send_slave(){
-
-	// send slave address + write bit
-
-	TWDR0 = 0x9E;	// slave address + write (10011110)
-
-	TWCR0 = ( (1 << TWINT) | (1 << TWEN) );
-
-
-	while(! (TWCR0 & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
-
-	if ( (TWSR0 & 0xf8) != 0x18){ // confirms that slave has received address and sent ACK
-
-		return 0;
-	}
-
-	return 1;
-
-
-}
-
-int send_reg(int reg){
-
-	// send  address of register to be written
-
-	TWDR0 = reg; 
-
-	TWCR0 = ( (1 << TWINT) | (1 << TWEN) );
-
-	while(! (TWCR0 & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
-
-
-	if ( ((TWSR0 & 0xf8) != 0x28) ){ // confirms that slave has received address of register and sent ACK
-
-		return 0; 
-	}
-
-	return 1;
-
-
-}
-
-
-int send(int data){
-
-	TWDR0 = data;
-
-	TWCR0 = ((1 << TWINT) | (1 << TWEN));
-	
-	while(! (TWCR0 & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
-
-	if ( ((TWSR0 & 0xf8) != 0x28) ){ // comfirms that slave has accepted data and sent ACK
-
-		return 0; 
-	}
-
-	return 1;
-
-
-}
-
-void stop(){
-
-
-	TWCR0 |= ( (1 << TWEN) | (1 << TWINT) | (1 << TWSTO) ); 
-
-	return;
-}
-
-

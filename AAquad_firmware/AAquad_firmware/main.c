@@ -29,8 +29,9 @@ int main(void){
 
 PORTC |= ( (1 << 5) | (1 << 4) );
 
+sei();
 
-int motors[5] = {0};
+uint8_t motors[5] = {0};
 
 pwm_chip_init();
 pass_to_pwm_chip(motors);
@@ -39,34 +40,19 @@ pass_to_pwm_chip(motors);
 DDRB |= (1 << 1);
 PORTB |= (1 << 0);
 
-
 init_mux_timer();	// a lot of this function is disconnected
 init_free_timer();
 init_extern_ints();	
 
-DDRC = 0;
-PORTC = 0xFF;
-
-PORTD |= (1 << 3);
-
-
-TCCR4B |= ( (1 << WGM13) | (1 << WGM12) | (1 << CS10) );		// selecting fast PWM mode (counts up till selected value then resets)
-
-TCCR4A |= ((1 << WGM11)| (1<<COM1A1) | (1<<COM1A0));	// set inverting mode fast pwm
-
-
-ICR4 = 0xff;
-
-PORTB |= (1 << 1);
-
-
-
-DDRB |= (1 << 1);
-DDRB |= (1 << 0);
+uint16_t garbage = 0;
 
 while(1){
 
+motors[0] = garbage;
+pass_to_pwm_chip(motors);
+garbage ++;
 
+_delay_ms(4);
 
 
 }

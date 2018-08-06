@@ -1,5 +1,5 @@
 #include <avr/io.h>
-
+#include "I2C_328pb.h"
 #include <stdint.h>
 
 #ifndef PASS_TO_PWM_CHIP

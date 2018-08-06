@@ -138,6 +138,9 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="c_files\I2C_328pb.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="c_files\init_free_timer.c">
       <SubType>compile</SubType>
     </Compile>
@@ -163,6 +166,9 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="header_files\encode_to_motors.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="header_files\I2C_328pb.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="header_files\init_free_timer.h">

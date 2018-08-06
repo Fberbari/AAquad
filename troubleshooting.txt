@@ -135,3 +135,7 @@
 
 		-auto increment functions
 		-set OE to 1, set OE to 0
+
+	status: resolved. It was the OE bit
+
+8. PWM chip outpt frequency not changing from about 250 Hz.

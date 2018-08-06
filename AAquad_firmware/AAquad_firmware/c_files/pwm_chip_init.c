@@ -1,6 +1,7 @@
 #include "pwm_chip_init.h"
 
 
+
 int pwm_chip_init(){
 	
 	
@@ -10,113 +11,49 @@ int pwm_chip_init(){
 
 	TWBR0 = (1 << 1); // I'll run the cpu at 1 MHz, this divides the value by 2 for 50 KHZ
 
-	TWCR0 = ( (1 << TWEN) | (1 << TWSTA ) | (1 << TWINT) ); // writes the start condition on the line  and Hardware will clear this bit when read
 
+	if  ( ! start() ){
 
-	while(! (TWCR0 & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
+		return 0;
+	} 
 
-	if ( (TWSR0 & 0xf8) != 0x08){ // comfirms that status is infact start condition has gone through
+	if ( ! send_slave() ){
 
-		return 0; 
-	}
+		return 0;
+	} 
 
-
-	// send slave address + write bit
-	
-	TWDR0 = 0x9E;	// slave address + write (10011110)
-	
-	TWCR0 =( (1 << TWEN) | (1 << TWINT) ); // The TWI process takes controll of the I/O pins
-
-	while(! (TWCR0 & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
-
-	if ( (TWSR0 & 0xf8) != 0x18){ // confirms that slave has received address and sent ACK
+	if ( ! send_reg(0x0) ){	// mode register 1
 
 		return 0;
 	}
 
-	// send address of register to be written
-
-	TWDR0 = 0x0; //  ( Mode register 1)
-
-	TWCR0 = ( (1 << TWINT) | (1 << TWEN) );
-
-	while(! (TWCR0 & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
-
-
-	if ( ((TWSR0 & 0xf8) != 0x28) ){ // confirms that slave has received address of register and sent ACK
-
-		return 0; 
-	}
-
-	// send databyte
-
-	TWDR0 = 0x21; // (00100000)	auto increment enable, clock on
-
-	TWCR0 = ((1 << TWINT) | (1 << TWEN));
-	
-	while(! (TWCR0 & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
-
-	if ( ((TWSR0 & 0xf8) != 0x28) ){ // comfirms that slave has received address of register and sent ACK
-
-		return 0; 
-	}
-
-	// send repeated start
-
-	TWCR0 = ((1 << TWEN) | (1 << TWSTA) | (1 << TWINT));
-
-	while(! (TWCR0 & (1 << TWINT)) );
-
-	if ( (TWSR0 & 0xf8) != 0x10){ 
-
-		return 0; 
-	}
-
-	// send slave address + write bit
-
-	TWDR0 = 0x9E;	// slave address + write (10011110)
-
-	TWCR0 = ( (1 << TWINT) | (1 << TWEN) );
-
-
-	while(! (TWCR0 & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
-
-	if ( (TWSR0 & 0xf8) != 0x18){ // confirms that slave has received address and sent ACK
+	if ( ! send(0x21) ){	// clock on, auto-increment enable
 
 		return 0;
 	}
 
-	// send address of register to be written
+	if ( ! repeat_start() ){
 
-	TWDR0 = 0xfe; //  ( prescale register)
+		return 0;
+	}
 
-	TWCR0 = ( (1 << TWINT) | (1 << TWEN) );
+	if ( ! send_slave() ){
 
-	while(! (TWCR0 & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
+		return 0;
+	}
 
+	if ( ! send_reg(0xFE) ){	// pre scale register
 
-	if ( ((TWSR0 & 0xf8) != 0x28) ){ // confirms that slave has received address of register and sent ACK
-
-		return 0; 
+		return 0;
 	}
 
 
-	// send databyte
+	if ( ! send(122) ){
 
-	TWDR0 = 122; // 50Hz
-
-	TWCR0 = ((1 << TWINT) | (1 << TWEN));
-	
-	while(! (TWCR0 & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
-
-	if ( ((TWSR0 & 0xf8) != 0x28) ){ // comfirms that slave has received address of register and sent ACK
-
-		return 0; 
+		return 0;
 	}
 
-	// stop
-
-	TWCR0 |= ( (1 << TWEN) | (1 << TWINT) | (1 << TWSTO) ); 
+	stop();
 
 	return 1;
 
@@ -124,4 +61,3 @@ int pwm_chip_init(){
 
 
 }
-
