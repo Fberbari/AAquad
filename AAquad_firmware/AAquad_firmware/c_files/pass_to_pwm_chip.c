@@ -35,7 +35,7 @@ int pass_to_pwm_chip(uint8_t* motors){
 		return 0;
 	}
 
-		if( (send(0) & send(0) & send(instruction[0]) & send(instruction[1])) == 0){ //ON_L, ON_H, OFF_L, OFF_H
+		if( (send(0) & send(0) & send(0xB0) & send(0x4)) == 0){ //ON_L, ON_H, OFF_L, OFF_H
 
 		return 0;
 	}
