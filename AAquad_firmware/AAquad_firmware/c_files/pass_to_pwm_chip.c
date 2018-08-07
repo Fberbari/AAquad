@@ -145,9 +145,11 @@ int pass_to_pwm_chip(uint8_t* motors){
 
 void decode_motors(uint8_t motor, uint8_t* motors, uint8_t*instruction){
 	
-	uint16_t temp = motors[motor] * 205;	// the actualslope of this curve is 2.05, 100 times larger prevents the .05from falling off
+	// input of 100 corresponds to an output of 410
 	
-	temp = ( temp / 100 ) + 205;	// 205 is the value corresponding to 0 for the esc
+	uint16_t temp = motors[motor] * 2;	// the actualslope of this curve is 2.05
+	
+	temp += 205;	// 205 is the value corresponding to 0 for the esc
 	
 	instruction[0] = ( temp & 0xff );	// conserves only the low byte
 	

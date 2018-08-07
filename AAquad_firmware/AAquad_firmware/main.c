@@ -16,14 +16,15 @@
 #include "pass_to_pwm_chip.h"
 #include <util/delay.h>
 
-
-#include "macros/acc_defines.h"
-
 #define F_CPU 1000000UL
 
-	volatile uint16_t requested_aileron_pos = 0; 
+
+
+	volatile uint16_t requested_aileron_pos = 0;
+	volatile float processed_aileron_pos = 0.0; 
 	volatile uint16_t temp_timer_aileron = 0; 
-	volatile uint16_t temp = 0;
+	volatile uint16_t temp0 = 0;	// used in ISR(ext_int_o)
+	volatile bool new_aileron_data_available = false;
 
 int main(void){
 
@@ -44,16 +45,38 @@ init_mux_timer();	// a lot of this function is disconnected
 init_free_timer();
 init_extern_ints();	
 
-uint16_t garbage = 0;
 
 while(1){
+	
+	if (new_aileron_data_available){
 
-motors[0] = garbage;
-pass_to_pwm_chip(motors);
-garbage ++;
+		if (requested_aileron_pos > 0x7000 ){
+			
+			processed_aileron_pos = 0xffff - requested_aileron_pos;
+		}
+		
+		else{
+			
+			processed_aileron_pos = requested_aileron_pos;
+			
+		}
+		
+		
+		processed_aileron_pos *= 100;
+		processed_aileron_pos /= 6553;	// 10% of the total value
+		
+		
+		motors[0] = processed_aileron_pos;
+		motors[1] = 100;
+		motors[3] = 0;
+		
+		pass_to_pwm_chip(motors);
+		
+		new_aileron_data_available = false;
+	}
 
-_delay_ms(4);
 
+	
 
 }
 
@@ -64,29 +87,28 @@ return 0;
 }
 ISR(INT1_vect){
 	
-		temp = TCNT1;
+		temp0 = TCNT1;
 		
-/*
-		if ( temp < temp_timer_aileron){	// timer overflow
 
-			requested_aileron_pos = 0xff- temp_timer_aileron + temp ;
+		if ( temp0 < temp_timer_aileron){	// timer overflow
+
+			requested_aileron_pos = (0xffff - temp_timer_aileron) + temp0 ;
 		}
-*/
-		if (temp > temp_timer_aileron){
+
+		else {	// regular case
 	
-			requested_aileron_pos = temp - temp_timer_aileron;
+			requested_aileron_pos = temp0 - temp_timer_aileron;
 			
 		}
 	
 		
-		temp_timer_aileron = temp;
-		
-
+		temp_timer_aileron = temp0;
 		
 		
-			OCR4A = (requested_aileron_pos >> 8);
-
-
+		new_aileron_data_available = true;
+		
+		// here, there is a chance that the value stored in requested aileron is actually (0xffff - actual requested aileron) this needs to be fixed in the while loop, it has been avoided here to kep the ISR short.
+	
 }
 
 ISR(INT0_vect){

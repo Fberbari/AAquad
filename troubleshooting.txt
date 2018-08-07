@@ -139,3 +139,5 @@
 	status: resolved. It was the OE bit
 
 8. PWM chip outpt frequency not changing from about 250 Hz.
+
+9. Every once in a while, the pwm read captures the wrong wave
