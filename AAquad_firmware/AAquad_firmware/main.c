@@ -9,7 +9,6 @@
 #include "avr_compiler.h"
 
 #include "lis3dh_func.h"
-#include "init_mux_timer.h"
 #include "init_free_timer.h"
 #include "init_ints.h"
 #include "pwm_chip_init.h"
@@ -41,7 +40,6 @@ pass_to_pwm_chip(motors);
 DDRB |= (1 << 1);
 PORTB |= (1 << 0);
 
-init_mux_timer();	// a lot of this function is disconnected
 init_free_timer();
 init_extern_ints();	
 

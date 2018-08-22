@@ -1,0 +1,25 @@
+EESchema-LIBRARY Version 2.3
+#encoding utf-8
+#SamacSys ECAD Model LP2985AIM5-3.3_NOPB
+#/156887/58473/2.30/5/3/Integrated Circuit
+DEF LP2985AIM5-3.3_NOPB IC 0 30 Y Y 1 F N
+F0 "IC" 1150 300 50 H V L CNN
+F1 "LP2985AIM5-3.3_NOPB" 1150 200 50 H V L CNN
+F2 "SOT95P280X145-5N" 1150 100 50 H I L CNN
+F3 "http://www.ti.com/general/docs/lit/getliterature.tsp?genericPartNumber=LP2985-N&amp;&amp;fileType=pdf" 1150 0 50 H I L CNN
+F4 "Micropower 150-mA Low-Noise Ultra-Low-Dropout Regulator in SOT-23 packages" 1150 -100 50 H I L CNN "Description"
+F5 "1.45" 1150 -200 50 H I L CNN "Height"
+F6 "2412124" 1150 -300 50 H I L CNN "Farnell Part Number"
+F7 "Texas Instruments" 1150 -400 50 H I L CNN "Manufacturer_Name"
+F8 "LP2985AIM5-3.3/NOPB" 1150 -500 50 H I L CNN "Manufacturer_Part_Number"
+DRAW
+X VIN 1 0 0 200 R 50 50 0 0 B
+X GND 2 0 -100 200 R 50 50 0 0 B
+X ON/OFF 3 0 -200 200 R 50 50 0 0 B
+X BYPASS 4 1300 0 200 L 50 50 0 0 B
+X VOUT 5 1300 -100 200 L 50 50 0 0 B
+P 5 0 1 6 200 100 1100 100 1100 -300 200 -300 200 100 N
+ENDDRAW
+ENDDEF
+#
+#End Library

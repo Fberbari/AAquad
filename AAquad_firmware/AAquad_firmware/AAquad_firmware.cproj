@@ -147,9 +147,6 @@
     <Compile Include="c_files\init_ints.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="c_files\init_mux_timer.c">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="c_files\lis3dh_func.c">
       <SubType>compile</SubType>
     </Compile>
