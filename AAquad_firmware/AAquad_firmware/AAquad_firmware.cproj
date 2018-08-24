@@ -138,7 +138,13 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="c_files\acc_init.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="c_files\I2C_328pb.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="c_files\I2C_init.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="c_files\init_free_timer.c">
@@ -156,6 +162,9 @@
     <Compile Include="c_files\pwm_chip_init.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="header_files\acc_init.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="header_files\avr_compiler.h">
       <SubType>compile</SubType>
     </Compile>
@@ -166,6 +175,9 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="header_files\I2C_328pb.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="header_files\I2C_init.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="header_files\init_free_timer.h">

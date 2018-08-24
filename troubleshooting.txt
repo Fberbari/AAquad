@@ -109,20 +109,22 @@
 	Status: Unresolved but most likely will be ignored as values can be rejected by the software if thy are implausible.
 
 
-6. TWINT bit not being set after start condition is sent
+6. TWINT bit not being set after start condition is sent	//// this is a problem that s occuring for a range of reasons.
 
 	hypotheses:
 
 		-pullup rsistors not set.
 		-prescalers fucked up
+		- a short on SCL
 
 	results:
 
 		- after pullups set, problem persists
-		- after pullups set, problem persists
+		- even when done in hardware, SCL is alwayspulled down to 0.
 
 	status: solved. I was writing = instead of |= to the controll register and killing the TWI process by mistake
 	status: selved. WHen interacting with the TWCR, write to it in one single line of code. (use = instead of |=)
+	status: the gate of the mosfet is floating, so sometimes it shorts and sometimes it blocks
 
 7. PWM chip not outputting pwm despite accepting all data
 

@@ -36,11 +36,11 @@ int repeat_start(){
 }
 
 
-int send_slave(){
+int send_slave(int address){
 
 	// send slave address + write bit
 
-	TWDR0 = 0x9E;	// slave address + write (10011110)
+	TWDR0 = address;
 
 	TWCR0 = ( (1 << TWINT) | (1 << TWEN) );
 
@@ -63,7 +63,7 @@ int send_reg(int reg){
 
 	TWDR0 = reg; 
 
-	TWCR0 = ( (1 << TWINT) | (1 << TWEN) );
+  	TWCR0 = ( (1 << TWINT) | (1 << TWEN) );
 
 	while(! (TWCR0 & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
 

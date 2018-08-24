@@ -13,3 +13,5 @@
 7. ALWAYS select the cheapest and least complex approach.
 
 8. The input capture unit (ICU) of the timers should be used to read pwm. 
+
+9. use 2 different I2C busses when using a level shifter

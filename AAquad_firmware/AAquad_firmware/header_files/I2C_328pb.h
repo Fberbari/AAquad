@@ -6,7 +6,7 @@
 
 int start();
 int repeat_start();
-int send_slave();
+int send_slave(int address);
 int send_reg(int reg);
 int send(int data); 
 void stop(); 

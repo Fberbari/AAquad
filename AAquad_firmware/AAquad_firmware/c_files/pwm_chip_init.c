@@ -9,7 +9,7 @@ int pwm_chip_init(){
 
 	//This function sets the auto increment, the prescaler and any other necessary feature required for the pwm chip to run 
 
-	TWBR0 = (1 << 1); // I'll run the cpu at 1 MHz, this divides the value by 2 for 50 KHZ
+	//TWBR0 = (1 << 1); // I'll run the cpu at 1 MHz, this divides the value by 2 for 50 KHZ
 
 
 	if  ( ! start() ){
@@ -17,7 +17,7 @@ int pwm_chip_init(){
 		return 0;
 	} 
 
-	if ( ! send_slave() ){
+	if ( ! send_slave(0x9E) ){
 
 		return 0;
 	} 
@@ -37,7 +37,7 @@ int pwm_chip_init(){
 		return 0;
 	}
 
-	if ( ! send_slave() ){
+	if ( ! send_slave(0x9E) ){
 
 		return 0;
 	}

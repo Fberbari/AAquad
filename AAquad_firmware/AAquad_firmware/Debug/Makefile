@@ -40,7 +40,9 @@ SUBDIRS :=  \
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
+../c_files/acc_init.c \
 ../c_files/I2C_328pb.c \
+../c_files/I2C_init.c \
 ../c_files/init_free_timer.c \
 ../c_files/init_ints.c \
 ../c_files/lis3dh_func.c \
@@ -56,7 +58,9 @@ ASM_SRCS +=
 
 
 OBJS +=  \
+c_files/acc_init.o \
 c_files/I2C_328pb.o \
+c_files/I2C_init.o \
 c_files/init_free_timer.o \
 c_files/init_ints.o \
 c_files/lis3dh_func.o \
@@ -65,7 +69,9 @@ c_files/pwm_chip_init.o \
 main.o
 
 OBJS_AS_ARGS +=  \
+c_files/acc_init.o \
 c_files/I2C_328pb.o \
+c_files/I2C_init.o \
 c_files/init_free_timer.o \
 c_files/init_ints.o \
 c_files/lis3dh_func.o \
@@ -74,7 +80,9 @@ c_files/pwm_chip_init.o \
 main.o
 
 C_DEPS +=  \
+c_files/acc_init.d \
 c_files/I2C_328pb.d \
+c_files/I2C_init.d \
 c_files/init_free_timer.d \
 c_files/init_ints.d \
 c_files/lis3dh_func.d \
@@ -83,7 +91,9 @@ c_files/pwm_chip_init.d \
 main.d
 
 C_DEPS_AS_ARGS +=  \
+c_files/acc_init.d \
 c_files/I2C_328pb.d \
+c_files/I2C_init.d \
 c_files/init_free_timer.d \
 c_files/init_ints.d \
 c_files/lis3dh_func.d \
@@ -105,6 +115,10 @@ LINKER_SCRIPT_DEP+=
 
 
 # AVR32/GNU C Compiler
+
+
+
+
 
 
 

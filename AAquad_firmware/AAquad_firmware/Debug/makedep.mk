@@ -2,7 +2,11 @@
 # Automatically-generated file. Do not edit or delete the file
 ################################################################################
 
+c_files\acc_init.c
+
 c_files\I2C_328pb.c
+
+c_files\I2C_init.c
 
 c_files\init_free_timer.c
 

@@ -20,7 +20,7 @@ int pass_to_pwm_chip(uint8_t* motors){
 		return 0;
 	}
 
-	if (! send_slave() ){
+	if (! send_slave(0x9E) ){
 
 		return 0;
 	}
@@ -50,7 +50,7 @@ int pass_to_pwm_chip(uint8_t* motors){
 		return 0;
 	}
 
-	if (! send_slave() ){
+	if (! send_slave(0x9E) ){
 
 		return 0;
 	}
@@ -79,7 +79,7 @@ int pass_to_pwm_chip(uint8_t* motors){
 		return 0;
 	}
 
-	if (! send_slave() ){
+	if (! send_slave(0x9E) ){
 
 		return 0;
 	}
@@ -110,7 +110,7 @@ int pass_to_pwm_chip(uint8_t* motors){
 		return 0;
 	}
 
-	if (! send_slave() ){
+	if (! send_slave(0x9E) ){
 
 		return 0;
 	}

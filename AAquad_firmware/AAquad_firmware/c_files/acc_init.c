@@ -1,6 +1,6 @@
 #include "acc_init.h"
 
-void acc_init(){
+int acc_init(){
 
 
 	if  ( ! start() ){
@@ -25,4 +25,6 @@ void acc_init(){
 
 
 	stop();
+	
+	return 1;
 }

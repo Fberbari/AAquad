@@ -7,12 +7,14 @@
 #include <stdint.h>
 
 #include "avr_compiler.h"
+#include "acc_init.h"
 
 #include "lis3dh_func.h"
 #include "init_free_timer.h"
 #include "init_ints.h"
 #include "pwm_chip_init.h"
 #include "pass_to_pwm_chip.h"
+#include "I2C_init.h"
 #include <util/delay.h>
 
 #define F_CPU 1000000UL
@@ -27,22 +29,55 @@
 
 int main(void){
 
-PORTC |= ( (1 << 5) | (1 << 4) );
-
-sei();
-
-uint8_t motors[5] = {0};
-
-pwm_chip_init();
-pass_to_pwm_chip(motors);
-
-
-DDRB |= (1 << 1);
-PORTB |= (1 << 0);
+PORTC |= ( (1 << 5) | (1 << 4) );	// pulup resistors fix this in hardware!!!!!!
 
 init_free_timer();
 init_extern_ints();	
+I2C_init();
 
+
+if (! pwm_chip_init() ){
+
+	_delay_ms(5);
+
+	if (! pwm_chip_init() ){
+
+		// decaire error code on led's
+	}
+}
+
+
+
+
+if (! gyro_init() ){
+
+	_delay_ms(5);
+
+	if (! gyro_init() ){
+
+		// decaire error code on led's
+	}
+}
+
+
+
+
+if (! acc_init() ){
+
+	_delay_ms(5);
+
+	if (! acc_init() ){
+
+		// decaire error code on led's
+	}
+}
+
+
+uint8_t motors[5] = {0};	// carries data transferred to the motors
+
+
+
+sei();
 
 while(1){
 	
@@ -61,14 +96,8 @@ while(1){
 		
 		
 		processed_aileron_pos *= 100;
-		processed_aileron_pos /= 6553;	// 10% of the total value
-		
-		
-		motors[0] = processed_aileron_pos;
-		motors[1] = 100;
-		motors[3] = 0;
-		
-		pass_to_pwm_chip(motors);
+		processed_aileron_pos /= 6553;	// 10% of the total value of the 16bit register
+
 		
 		new_aileron_data_available = false;
 	}
@@ -111,7 +140,29 @@ ISR(INT1_vect){
 
 ISR(INT0_vect){
 	
-	DDRB |= (1 << 7);
+		temp0 = TCNT1;
+		
+
+		if ( temp0 < temp_timer_throttle){	// timer overflow
+
+			requested_throttle_pos = (0xffff - temp_timer_throttle) + temp0 ;
+		}
+
+		else {	// regular case
+	
+			requested_throttle_pos = temp0 - temp_timer_throttle;
+			
+		}
+	
+		
+		temp_timer_throttle = temp0;
+		
+		
+		new_throttle_data_available = true;
+		
+		// here, there is a chance that the value stored in requested throttle is actually (0xffff - actual requested throttle) this needs to be fixed in the while loop, it has been avoided here to kep the ISR short.
+	
+	
 
 }
 
