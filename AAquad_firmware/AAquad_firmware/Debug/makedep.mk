@@ -4,6 +4,8 @@
 
 c_files\acc_init.c
 
+c_files\gyro_init.c
+
 c_files\I2C_328pb.c
 
 c_files\I2C_init.c

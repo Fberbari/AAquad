@@ -143,3 +143,8 @@
 8. PWM chip outpt frequency not changing from about 250 Hz.
 
 9. Every once in a while, the pwm read captures the wrong wave
+
+
+////////////////////////////////// PCB revision 2
+
+10. accelerometer does not respond/ responds with ack after slave address called.

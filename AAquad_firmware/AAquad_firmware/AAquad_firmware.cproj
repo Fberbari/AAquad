@@ -141,6 +141,9 @@
     <Compile Include="c_files\acc_init.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="c_files\gyro_init.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="c_files\I2C_328pb.c">
       <SubType>compile</SubType>
     </Compile>
@@ -172,6 +175,9 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="header_files\encode_to_motors.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="header_files\gyro_init.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="header_files\I2C_328pb.h">
