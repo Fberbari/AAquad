@@ -19,7 +19,7 @@ sensors::sensors(I2C_328pb i2c){
 	i2c.send(0x15);	// all axis enable data refresh rate is 100Hz (a lot of other params also affected)
 	stop();
 
-
+			// default sensitivity is 8.75 mdps/digit
 
 }
 
@@ -91,11 +91,22 @@ void sensors::compute_position(){
 
 	const int R = sqrt( square(acc_x_data) + square(acc_y_data) + square(acc_z_data) );
 
-	acc_x_angle = asin( acc_x_data / R);	// accounts for +- sign 0 is the level value
-	acc_y_angle = asin( acc_y_data / R);	// accounts for +- sign 0 is the level value
-	acc_z_angle = acos( acc_z_data / R);	// angle will never be negative. Anything above 90 degrees means the quad is upside down.
 
-	// Till here, the accelerometer has given it's best estimate of angle
+	acc_x_angle_absolute = asin( acc_x_data / R);	// accounts for +- sign 0 is the level value
+	acc_y_angle_absolute = asin( acc_y_data / R);	// accounts for +- sign 0 is the level value
+	acc_z_angle_absolute = acos( acc_z_data / R);	// angle will never be negative. Anything above 90 degrees means the quad is upside down.
 
+	// Till here, the accelerometer has given its best estimate of angle
 
+	gyro_x_angle_relative = (gyro_x_data * GYRO_SENSITIVITY * time_between measurements); //angle between the projection of the new y or z vector onto the previous yz plane and the previous y or z vector
+	gyro_y_angle_relative = (gyro_y_data * GYRO_SENSITIVITY * time_between_measurements); //angle between the projection of the new z or x vector onto the previous zx plane and the previous z or x vector
+	gyro_z_angle_relative = (gyro_z_data * GYRO_SENSITIVITY * time_between_measurements); //angle between the projection of the new x or y vector onto the previous xy plane and the previous x or y vector
+
+	/* so I could tell you that new x axis has moved (gyro_y_angle_relative) in the y direction and (gyro_z_direction_relative in the z direction) */
+
+}
+
+void sensors::produce_vector(){
+
+	
 }
