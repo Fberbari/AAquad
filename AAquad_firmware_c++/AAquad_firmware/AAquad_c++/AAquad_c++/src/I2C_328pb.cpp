@@ -11,41 +11,41 @@ I2C_328pb::I2C_328pb(int bit_rate){
 
 
 
-int I2C_328pb::start(){
+void I2C_328pb::start(){
 
 	TWCR0 = ( (1 << TWEN) | (1 << TWSTA ) | (1 << TWINT) ); // writes the start condition on the line  and Hardware will clear this bit when ready
 
 
 	while(! (TWCR0 & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
-
+/*
 	if ( (TWSR0 & 0xf8) != 0x08){ // comfirms that status is infact start condition has gone through
 
 		return 0; 
 	}
 
 	return 1;
-
+*/
 }
 
 
-int I2C_328pb::repeat_start(){
+void I2C_328pb::repeat_start(){
 
 	TWCR0 = ( (1 << TWEN) | (1 << TWSTA ) | (1 << TWINT) ); // writes the start condition on the line  and Hardware will clear this bit when ready
 
 
 	while(! (TWCR0 & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
-
+/*
 	if ( (TWSR0 & 0xf8) != 0x10){ // comfirms reapeated start
 
 		return 0; 
 	}
 
 	return 1;
-
+*/
 }
 
 
-int I2C_328pb::send_slave(int address){
+void I2C_328pb::send_slave(int address){
 
 	// send slave address + write bit
 
@@ -55,18 +55,18 @@ int I2C_328pb::send_slave(int address){
 
 
 	while(! (TWCR0 & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
-
-	if ( (TWSR0 & 0xf8) != 0x18){ // confirms that slave has received address and sent ACK
+/*
+	if ( ( (TWSR0 & 0xf8) != 0x18) && (TWSR0 & 0xf8) != 0x40) ) { // confirms that slave has received address and sent ACK
 
 		return 0;
 	}
 
 	return 1;
-
+*/
 
 }
 
-int I2C_328pb::send_reg(int reg){
+void I2C_328pb::send_reg(int reg){
 
 	// send  address of register to be written
 
@@ -76,32 +76,61 @@ int I2C_328pb::send_reg(int reg){
 
 	while(! (TWCR0 & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
 
-
+/*
 	if ( ((TWSR0 & 0xf8) != 0x28) ){ // confirms that slave has received address of register and sent ACK
 
 		return 0; 
 	}
 
 	return 1;
-
+*/
 
 }
 
 
-int I2C_328pb::send(int data){
+void I2C_328pb::send(int data){
 
 	TWDR0 = data;
 
 	TWCR0 = ((1 << TWINT) | (1 << TWEN));
 	
 	while(! (TWCR0 & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
-
+/*
 	if ( ((TWSR0 & 0xf8) != 0x28) ){ // comfirms that slave has accepted data and sent ACK
 
 		return 0; 
 	}
 
 	return 1;
+*/
+
+}
+
+void I2C_328pb::get_next_byte(){
+
+
+	TWCR0 = ( (1 << TWINT) | (1 << TWEA) );
+
+	while (! (TWCR0 & (1 << TWINT)) );
+/*
+	if ( ((TWSR0 & 0xf8) != 0x50) ){ // comfirms that slave has accepted data and sent ACK
+
+		return 0; 
+	}
+
+	return 1;
+
+*/
+
+
+}
+
+void I2C_328pb::end_data_read(){
+
+
+	TWCR0 = ( (1 << TWINT) );
+
+	while (! (TWCR0 & (1 << TWINT)) );
 
 
 }

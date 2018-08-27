@@ -38,12 +38,7 @@ I2C_init();
 
 if (! pwm_chip_init() ){
 
-	_delay_ms(5);
-
-	if (! pwm_chip_init() ){
-
-		// decaire error code on led's
-	}
+	PORTB |= (1 << 0);
 }
 
 
@@ -51,12 +46,7 @@ if (! pwm_chip_init() ){
 
 if (! gyro_init() ){
 
-	_delay_ms(5);
-
-	if (! gyro_init() ){
-
-		// decaire error code on led's
-	}
+	PORTB |= (1 << 1);
 }
 
 
@@ -64,12 +54,7 @@ if (! gyro_init() ){
 
 if (! acc_init() ){
 
-	_delay_ms(5);
-
-	if (! acc_init() ){
-
-		// decaire error code on led's
-	}
+	PORTB |= (1 << 1);
 }
 
 

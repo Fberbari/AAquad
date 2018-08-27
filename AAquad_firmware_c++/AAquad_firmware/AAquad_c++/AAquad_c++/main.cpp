@@ -29,7 +29,6 @@
 
 int main(void){
 
-PORTC |= ( (1 << 5) | (1 << 4) );	// pulup resistors fix this in hardware!!!!!!
 
 init_free_timer();
 init_extern_ints();	
