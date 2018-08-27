@@ -5,6 +5,8 @@
 #define SENSORS
 
 
+#define GYRO_SENSITIVITY 0.00875	// unit is mdps/digit
+
 
 class sensors{
 
@@ -18,29 +20,22 @@ class sensors{
 
 	private:
 
-		uint16_t acc_x_data;
-		uint16_t acc_y_data;	//raw data from acc
-		uint16_t acc_z_data;
+		float get_time(); // gives us time since last scan and updates the variable
 
-		uint16_t gyro_x_data;
-		uint16_t gyro_y_data;	// raw data from gyro
-		uint16_t gyro_z_data;
+		int16_t acc_x_data;
+		int16_t acc_y_data;	//raw data from acc
+		int16_t acc_z_data;
 
-		uint16_t acc_x_angle;
-		uint16_t acc_y_angle;	// processed angle without considering gyro
-		uint16_t acc_z_angle;
+		int16_t gyro_x_data;
+		int16_t gyro_y_data;	// raw data from gyro
+		int16_t gyro_z_data;
 
 
-		uint16_t combined_x_angle;
-		uint16_t combined_y_angle;	// final current processed angle
-		uint16_t combined_z_angle;
+		float pitch;
+		float roll;	// holds the angles of the CURRENT position
 
-		
-		uint16_t previous_x_angle;
-		uint16_t previous_y_angle;	// for use in computing the new processed angle
-		uint16_t previous_z_angle;
+		uint16_t time_of_previous_scan; // timer is updated and read every time. 
 
-		uint16_t time_between;
 
 }
 
