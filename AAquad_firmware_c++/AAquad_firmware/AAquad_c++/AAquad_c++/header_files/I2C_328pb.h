@@ -1,5 +1,4 @@
-#include <avr\io.h>
-
+#include "avr_compiler.h"
 
 #ifndef I2C_328PB 
 #define I2C_328PB 
@@ -21,7 +20,7 @@ class I2C_328pb{
 		void stop();
 
 
-}
+};
 
 
 

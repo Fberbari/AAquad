@@ -5,20 +5,22 @@
 sensors::sensors(I2C_328pb i2c){
 
 	i2c.start(); 
-	i2c.send_slave(0x32);	// acc slave + w
+	i2c.send_slave(0xB2);	// acc slave + w + autoincrement
 	i2c.send_reg(0x20);	// Control register 1
 	i2c.send(0x67);	// all axis enable data refresh rate is 200Hz
-	stop();
-	// CTRL reg 4 should be set to properly controll measurement range and sensitivity
-	// default sensitivity is 1000 mg/digit
+	i2c.send(0x0);	// CR2 default values
+	i2c.send(0x0);	// CR3 default values
+	i2c.send(0x10);	// CR4  +- 4g and 8mg/digit
+	i2c.stop();
+	
 
-////////////////////////////// accelerometer init above and guro init below
+////////////////////////////// accelerometer init above and gyro init below
 
 	i2c.start();
 	i2c.send_slave(0xD6); // gyro slave + w
 	i2c.send_reg(0x20);	// Control register 1
 	i2c.send(0x15);	// all axis enable data refresh rate is 100Hz (a lot of other params also affected)
-	stop();
+	i2c.stop();
 
 			// default sensitivity is 8.75 mdps/digit
 
@@ -26,7 +28,7 @@ sensors::sensors(I2C_328pb i2c){
 
 
 
-int sensors::read_acc(I2C_328pb i2c){
+void sensors::read_acc(I2C_328pb i2c){
 
 	i2c.start(); 
 	i2c.send_slave(0x32);	// acc slave + w
@@ -56,7 +58,7 @@ int sensors::read_acc(I2C_328pb i2c){
 	i2c.stop();
 }
 
-int sensors::read_gyro(I2C_328pb i2c){
+void sensors::read_gyro(I2C_328pb i2c){
 
 	i2c.start(); 
 	i2c.send_slave(0xD6);	// gyro slave + w
@@ -96,14 +98,14 @@ void sensors::compute_position(){
 
 
 	pitch += (gyro_y_data * GYRO_SENSITIVITY * time_between_measurements);
-	roll += (gyro_x_data * GYRO_SENSITIVITY * time_between measurements);
+	roll += (gyro_x_data * GYRO_SENSITIVITY * time_between_measurements);
 
-	yaw_rate = (gyro_z_data / GYRO_SENSITIVITY );
-
-
+	yaw_rate = (gyro_z_data * GYRO_SENSITIVITY );
 
 
-	R = sqrt( square( acc_x_data / ACC_SENSITIVITY ) + square( acc_y_data / ACC_SENSITIVITY ) + square( acc_z_data / ACC_SENSITIVITY ) );
+
+
+	R = sqrt( square( acc_x_data ) + square( acc_y_data ) + square( acc_z_data ) ) * ACC_SENSITIVITY;
 
 
 	if ( abs(R) > 1.5 || abs(R) < 0.5 ){
@@ -113,8 +115,8 @@ void sensors::compute_position(){
 	}
 
 
-	acc_pitch_angle = asin( 1000 * acc_y_data / R);	// accounts for +- sign 0 is the level value
-	acc_roll_angle = asin( 1000 * acc_x_data / R);	// accounts for +- sign 0 is the level value
+	float acc_pitch_angle = asin( 1000 * acc_y_data / R);	// accounts for +- sign 0 is the level value
+	float acc_roll_angle = asin( 1000 * acc_x_data / R);	// accounts for +- sign 0 is the level value
 
 
 
@@ -133,26 +135,42 @@ void sensors::compute_position(){
 float sensors:: get_time(){
 
 	uint16_t time = TCNT1;
+	
 	float result;
 	
 
-	if (TCNT1 < time_of_preious_scan){
+	if (TCNT1 < time_of_previous_scan){
 
-		result = 0xffff - time_of_preious_scan + time ;
+		result = 0xffff - time_of_previous_scan + time ;
 
 	}
 
 	else{
 
-		result = time - result;
+		result = time - time_of_previous_scan;
 	}
 
 
-	result /= division_factor;
+	result /= (float)TIMER_BIT_RATE;
 
-	time_of_preious_scan = time;
+	time_of_previous_scan = time;
 
 	return result;
 
 
+}
+
+float sensors::get_pitch() const{
+	
+	return pitch;
+}
+
+float sensors::get_roll() const{
+	
+	return roll;
+}
+
+float sensors::get_yaw_rate() const{
+	
+	return yaw_rate;
 }

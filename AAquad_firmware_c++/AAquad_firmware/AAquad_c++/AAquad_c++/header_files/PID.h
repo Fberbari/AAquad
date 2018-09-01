@@ -1,14 +1,14 @@
-#include <avr\io.h>
-#include "math.h"
+#include "avr_compiler.h"
+#include <math.h>
 
-#ifndef PID
-#define PID
+#ifndef PID_H
+#define PID_H
 
 
-    class PID {
+class PID {
 
         public:
-            /// Public constructor
+
             PID();
 
             /// Set the P, I, D terms respectively. Use it AFTER setRefreshInterval or setRefreshRate
@@ -52,6 +52,10 @@
             /// The returned value is the output value of the filter.
             float refresh(const float &feedback_input);
 
+            // this function should be called with bank_pid.refresh and pitch_pid.refresh as arguments.
+            // Call it like PID::combine_data
+            static float combine_data(float bank_percentage, float pitch_percentage);
+
         private:
 
 
@@ -59,25 +63,25 @@
             void update_time();
 
 
-
+		float current_error;
             float last_error;
-            float error;
             float last_output;
             float output;
             float set_point;
             float Kp, Ki, Kd;
             float integral;
             float interval;
-            //float error_threshold;
             float output_upper_limit;
             float output_lower_limit;
+
+            static float motor[4];  // holds the percentage of full power that each individual motor needs to be at. This needs to be read for full output
             
 
             float time_elapsed;
-            uint16_t previous_clock; 
-        
+            uint16_t previous_clock;
 
-    };
+
+};
 
 
 #endif

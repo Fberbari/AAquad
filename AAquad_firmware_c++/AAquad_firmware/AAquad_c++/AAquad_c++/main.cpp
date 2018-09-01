@@ -1,167 +1,186 @@
 /*
- * Firmware Developper : Anthony Berbari
+ * Firmware Developer : Anthony Berbari
  */ 
 
-#include <avr/io.h>
-
-#include <stdint.h>
-
 #include "avr_compiler.h"
-#include "acc_init.h"
-#include "gyro_init.h"
 
-#include "lis3dh_func.h"
-#include "init_free_timer.h"
-#include "init_ints.h"
-#include "pwm_chip_init.h"
-#include "pass_to_pwm_chip.h"
-#include "I2C_init.h"
+
+#include "pwm_in_vars.h"	// global external variables
+
+
+
+
+#include "init.h"
+#include "I2C_328pb.h"
+#include "pilot_instructions.h"
+#include "sensors.h"
+#include "PID.h"
+
 #include <util/delay.h>
 
-#define F_CPU 1000000UL
 
 
 	volatile uint16_t requested_aileron_pos = 0;
-	volatile float processed_aileron_pos = 0.0; 
-	volatile uint16_t temp_timer_aileron = 0; 
-	volatile uint16_t temp0 = 0;	// used in ISR(ext_int_o)
-	volatile bool new_aileron_data_available = false;
+	volatile uint16_t temp_timer_aileron = 0; // holds the time signature of the previous edge in the PWM capture
+
+	volatile uint16_t requested_elevator_pos = 0;
+	volatile uint16_t temp_timer_elevator = 0; 
+
+	volatile uint16_t requested_rudder_pos = 0;
+	volatile uint16_t temp_timer_rudder = 0;
+
+	volatile uint16_t requested_throttle_pos = 0;
+	volatile uint16_t temp_timer_throttle = 0; 
+
+
 
 int main(void){
 
-
-init_free_timer();
-init_extern_ints();	
-I2C_init();
-
-
-if (! pwm_chip_init() ){
-
-	_delay_ms(5);
-
-	if (! pwm_chip_init() ){
-
-		// decaire error code on led's
-	}
-}
-
-
-
-
-if (! gyro_init() ){
-
-	_delay_ms(5);
-
-	if (! gyro_init() ){
-
-		// decaire error code on led's
-	}
-}
-
-
-
-
-if (! acc_init() ){
-
-	_delay_ms(5);
-
-	if (! acc_init() ){
-
-		// decaire error code on led's
-	}
-}
-
-
-uint8_t motors[5] = {0};	// carries data transferred to the motors
-
-
-
-sei();
-
-while(1){
+	initialize::interrupts();
+	initialize::timers();
 	
-	if (new_aileron_data_available){
-
-		if (requested_aileron_pos > 0x7000 ){
-			
-			processed_aileron_pos = 0xffff - requested_aileron_pos;
-		}
-		
-		else{
-			
-			processed_aileron_pos = requested_aileron_pos;
-			
-		}
-		
-		
-		processed_aileron_pos *= 100;
-		processed_aileron_pos /= 6553;	// 10% of the total value of the 16bit register
-
-		
-		new_aileron_data_available = false;
-	}
-
-
+	I2C_328pb i2c(2000); // 4Khz I2C clock
+	
+	pilot_instructions pilot;
+	pilot.set_max_angle(30);
+	pilot.set_max_yaw_rate(45);
+	
+	
+	
+	I2C_328pb sensor_I2C(2000);	// object created just for use in the sensor object
+	sensors sense(sensor_I2C);
+	
+	PID bank_pid;
+	bank_pid.setWeights(0.5,0.5,0.5);
+	bank_pid.setOutputLowerLimit(-30);
+	bank_pid.setOutputUpperLimit(30);
+	
+	PID pitch_pid;
+	pitch_pid.setWeights(0.5,0.5,0.5);
+	pitch_pid.setOutputLowerLimit(-30);
+	pitch_pid.setOutputUpperLimit(30);
+	
 	
 
-}
+
+	while(1){
+		
+		sense.read_acc(sensor_I2C);
+		sense.read_gyro(sensor_I2C);	// all sensor data processed
+		sense.compute_position();
+		
+		pilot.compute();	// all pilot data processed
+		
+		bank_pid.setDesiredPoint(pilot.get_bank_angle());
+		pitch_pid.setDesiredPoint(pilot.get_pitch_angle());
+		
+		
+		
+		
+
+	}
 
 
 
 return 0;
 
 }
+
+
+
 ISR(INT1_vect){
 	
-		temp0 = TCNT1;
+		uint16_t temp = TCNT1;
 		
 
-		if ( temp0 < temp_timer_aileron){	// timer overflow
+		if ( temp < temp_timer_aileron){	// timer overflow
 
-			requested_aileron_pos = (0xffff - temp_timer_aileron) + temp0 ;
+			requested_aileron_pos = (0xffff - temp_timer_aileron) + temp ;
 		}
 
 		else {	// regular case
 	
-			requested_aileron_pos = temp0 - temp_timer_aileron;
+			requested_aileron_pos = temp - temp_timer_aileron;
 			
 		}
 	
 		
-		temp_timer_aileron = temp0;
+		temp_timer_aileron = temp;
 		
-		
-		new_aileron_data_available = true;
 		
 		// here, there is a chance that the value stored in requested aileron is actually (0xffff - actual requested aileron) this needs to be fixed in the while loop, it has been avoided here to kep the ISR short.
 	
 }
 
-ISR(INT0_vect){/*
+ISR(INT0_vect){
 	
-		temp0 = TCNT1;
+		uint16_t temp = TCNT1;
 		
 
-		if ( temp0 < temp_timer_throttle){	// timer overflow
+		if ( temp < temp_timer_throttle){	// timer overflow
 
-			requested_throttle_pos = (0xffff - temp_timer_throttle) + temp0 ;
+			requested_throttle_pos = (0xffff - temp_timer_throttle) + temp ;
 		}
 
 		else {	// regular case
 	
-			requested_throttle_pos = temp0 - temp_timer_throttle;
+			requested_throttle_pos = temp - temp_timer_throttle;
 			
 		}
 	
 		
-		temp_timer_throttle = temp0;
+		temp_timer_throttle = temp;
 		
-		
-		new_throttle_data_available = true;
 		
 		// here, there is a chance that the value stored in requested throttle is actually (0xffff - actual requested throttle) this needs to be fixed in the while loop, it has been avoided here to kep the ISR short.
+}
+
+
+
+
+ISR(PCINT0_vect){
+
+	uint16_t temp = TCNT1;
+		
+
+	if ( temp < temp_timer_rudder){	// timer overflow
+
+		requested_rudder_pos = (0xffff - temp_timer_rudder) + temp ;
+	}
+
+	else {	// regular case
+
+		requested_rudder_pos = temp - temp_timer_rudder;
+		
+	}
+
 	
-	*/
+	temp_timer_rudder = temp;
+	
+	
+
+}
+
+ISR(PCINT1_vect){
+
+	uint16_t temp = TCNT1;
+	
+
+	if ( temp < temp_timer_elevator){	// timer overflow
+
+		requested_elevator_pos = (0xffff - temp_timer_elevator) + temp ;
+	}
+
+	else {	// regular case
+
+		requested_elevator_pos = temp - temp_timer_elevator;
+		
+	}
+
+	
+	temp_timer_elevator = temp;
+	
+	
 
 }
 

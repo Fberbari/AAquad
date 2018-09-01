@@ -1,21 +1,27 @@
-#include <avr\io.h>
+#include "avr_compiler.h"
 #include <math.h>
+#include "I2C_328pb.h"
 
 #ifndef SENSORS
 #define SENSORS
 
 
 #define GYRO_SENSITIVITY 0.00875	// unit is mdps/digit
-
+#define TIMER_BIT_RATE 819187	// bits per second
+#define ACC_SENSITIVITY 0.008	// 8md/digit
 
 class sensors{
 
 	public:
 
 		sensors(I2C_328pb i2c);
-		int read_acc(I2C_328pb i2c);
-		int read_gyro(I2C_328pb i2c);
+		void read_acc(I2C_328pb i2c);
+		void read_gyro(I2C_328pb i2c);
 		void compute_position();
+		
+		float get_pitch() const;
+		float get_roll() const;
+		float get_yaw_rate() const;
 
 
 	private:
@@ -27,17 +33,18 @@ class sensors{
 		int16_t acc_z_data;
 
 		int16_t gyro_x_data;
-		int16_t gyro_y_data;	// raw data from gyro
+		int16_t gyro_y_data;// raw data from gyro
 		int16_t gyro_z_data;
 
 
 		float pitch;
 		float roll;	// holds the angles of the CURRENT position
+		float yaw_rate;//holds the speed of the yawing motion in deg/s
 
 		uint16_t time_of_previous_scan; // timer is updated and read every time. 
 
 
-}
+};
 
 
 #endif
