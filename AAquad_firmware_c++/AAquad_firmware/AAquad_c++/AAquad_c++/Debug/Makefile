@@ -42,8 +42,8 @@ C_SRCS +=  \
 ../main.cpp \
 ../src/I2C_328pb.cpp \
 ../src/init.cpp \
-../src/PID.cpp \
 ../src/pilot_instructions.cpp \
+../src/pwm_chip.cpp \
 ../src/sensors.cpp
 
 
@@ -57,32 +57,32 @@ OBJS +=  \
 main.o \
 src/I2C_328pb.o \
 src/init.o \
-src/PID.o \
 src/pilot_instructions.o \
+src/pwm_chip.o \
 src/sensors.o
 
 OBJS_AS_ARGS +=  \
 main.o \
 src/I2C_328pb.o \
 src/init.o \
-src/PID.o \
 src/pilot_instructions.o \
+src/pwm_chip.o \
 src/sensors.o
 
 C_DEPS +=  \
 main.d \
 src/I2C_328pb.d \
 src/init.d \
-src/PID.d \
 src/pilot_instructions.d \
+src/pwm_chip.d \
 src/sensors.d
 
 C_DEPS_AS_ARGS +=  \
 main.d \
 src/I2C_328pb.d \
 src/init.d \
-src/PID.d \
 src/pilot_instructions.d \
+src/pwm_chip.d \
 src/sensors.d
 
 OUTPUT_FILE_PATH +=AAquad_c++.elf

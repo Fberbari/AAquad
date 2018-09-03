@@ -153,9 +153,12 @@
 
 
 
+11. PWM chip, upon initialisation spits out a very broken signal for some time before the clean wave arrives
 
 
-
+12. Not able to properly read the pwm input. 
+	
+	
 
 
 
@@ -167,3 +170,5 @@ SOFTWARE
 1. Tring to compile the PID class yields all kinds of errors including : :invalid use of this pointer
 
 	solved: the #ifndef, #def i used had the same name as the class so the preprocessor was messing stuff up. 
+
+

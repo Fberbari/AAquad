@@ -13,11 +13,12 @@
 #include "init.h"
 #include "I2C_328pb.h"
 #include "pilot_instructions.h"
+#include "pwm_chip.h"
+/*
 #include "sensors.h"
 #include "PID.h"
-
+*/
 #include <util/delay.h>
-
 
 
 	volatile uint16_t requested_aileron_pos = 0;
@@ -32,21 +33,23 @@
 	volatile uint16_t requested_throttle_pos = 0;
 	volatile uint16_t temp_timer_throttle = 0; 
 
-
+	volatile uint16_t temp0;
+	
 
 int main(void){
 
-	initialize::interrupts();
 	initialize::timers();
+	initialize::interrupts();
 	
-	I2C_328pb i2c(2000); // 4Khz I2C clock
+	
+	I2C_328pb i2c(0xFA); // 
 	
 	pilot_instructions pilot;
 	pilot.set_max_angle(30);
-	pilot.set_max_yaw_rate(45);
+	pilot.set_max_yaw_rate(45);	// this retrieves and holds the pilot's wishes
 	
 	
-	
+/*	
 	I2C_328pb sensor_I2C(2000);	// object created just for use in the sensor object
 	sensors sense(sensor_I2C);
 	
@@ -60,24 +63,31 @@ int main(void){
 	pitch_pid.setOutputLowerLimit(-30);
 	pitch_pid.setOutputUpperLimit(30);
 	
+*/	I2C_328pb pwm_chip_I2c(0xAA);
+	pwm_chip pwm(pwm_chip_I2c, 10);
+
+	sei();
 	
-
-
+	int motors[4] = {0};
+	
 	while(1){
-		
+	/*	
 		sense.read_acc(sensor_I2C);
 		sense.read_gyro(sensor_I2C);	// all sensor data processed
 		sense.compute_position();
-		
+	*/	
 		pilot.compute();	// all pilot data processed
-		
+	/*	
 		bank_pid.setDesiredPoint(pilot.get_bank_angle());
 		pitch_pid.setDesiredPoint(pilot.get_pitch_angle());
 		
-		
-		
-		
+		PID::combine_data(bank_pid.refresh(sense.get_bank()), pitch_pid.refresh(sense.get_pitch), pilot.get_throttle_power());
 
+	*/
+		motors[2] = pilot.get_throttle_power();
+		pwm.pass(pwm_chip_I2c, motors);	
+		
+		
 	}
 
 
@@ -114,22 +124,22 @@ ISR(INT1_vect){
 
 ISR(INT0_vect){
 	
-		uint16_t temp = TCNT1;
+		temp0 = TCNT1;
 		
 
-		if ( temp < temp_timer_throttle){	// timer overflow
+		if ( temp0 < temp_timer_throttle){	// timer overflow
 
-			requested_throttle_pos = (0xffff - temp_timer_throttle) + temp ;
+			requested_throttle_pos = (0xffff - temp_timer_throttle) + temp0 ;
 		}
 
 		else {	// regular case
 	
-			requested_throttle_pos = temp - temp_timer_throttle;
+			requested_throttle_pos = temp0 - temp_timer_throttle;
 			
 		}
 	
 		
-		temp_timer_throttle = temp;
+		temp_timer_throttle = temp0;
 		
 		
 		// here, there is a chance that the value stored in requested throttle is actually (0xffff - actual requested throttle) this needs to be fixed in the while loop, it has been avoided here to kep the ISR short.

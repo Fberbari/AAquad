@@ -111,3 +111,18 @@ void PID::update_time(){
 
 }
 
+void PID::combine_data(float bank_percentage, float pitch_percentage, float throttle_percentage){
+
+	//heavily depends on how the accelerometer and gyro are pointed and how the motors are plugged in.
+
+	motor[0] = (int) (bank_percentage + pitch_percentage) * throttle_percentage / 200 ;
+
+	motor[1] = (int) (bank_percentage - pitch_percentage) * throttle_percentage / 200 ;
+
+	motor[2] = (int) (-bank_percentage + pitch_percentage) * throttle_percentage / 200;
+
+	motor[3] = (int) (-bank_percentage - pitch_percentage) * throttle_percentage / 200;
+
+}
+
+int* PID::get_motor() const{ return motor; }

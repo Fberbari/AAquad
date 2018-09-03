@@ -6,6 +6,9 @@ I2C_328pb::I2C_328pb(int bit_rate){
 	// takes care of any and all initialsation
 
 	TWBR0 = bit_rate;
+	
+	PORTC |= ((1 << 4) | (1 << 5));
+	
 
 }
 
@@ -56,7 +59,7 @@ void I2C_328pb::send_slave(int address){
 
 	while(! (TWCR0 & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
 /*
-	if ( ( (TWSR0 & 0xf8) != 0x18) && (TWSR0 & 0xf8) != 0x40) ) { // confirms that slave has received address and sent ACK
+	if ( ( (TWSR0 & 0xf8) != 0x18) && ( (TWSR0 & 0xf8) != 0x40) ) { // confirms that slave has received address and sent ACK
 
 		return 0;
 	}

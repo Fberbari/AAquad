@@ -46,7 +46,6 @@ class PID {
             void setDesiredPoint(const float &desired_point);
 
             /// The refresh funcion that make all the PID computation.
-            /// Call it at specific rate, setted by setRefreshRate or setRefreshInterval (read descriptions).
             /// (use a timer interrupt if used on a embedded microcontroller)
             /// The feedback_input is the value from the feedback.
             /// The returned value is the output value of the filter.
@@ -54,7 +53,11 @@ class PID {
 
             // this function should be called with bank_pid.refresh and pitch_pid.refresh as arguments.
             // Call it like PID::combine_data
-            static float combine_data(float bank_percentage, float pitch_percentage);
+            // currently does nothing with yaw_rate
+            static void combine_data(float bank_percentage, float pitch_percentage, float throttle_percentage);
+
+            // returns the pointer to the motors array for use in the Pwm class
+            static int* get_motor() const;
 
         private:
 
@@ -74,7 +77,9 @@ class PID {
             float output_upper_limit;
             float output_lower_limit;
 
-            static float motor[4];  // holds the percentage of full power that each individual motor needs to be at. This needs to be read for full output
+            // holds the percentage of full power that each individual motor needs to be at. This needs to be read for full output
+            // this array will be read by the pilot for info
+            static int motor[4];  
             
 
             float time_elapsed;

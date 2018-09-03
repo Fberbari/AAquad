@@ -8,6 +8,7 @@ class initialize{
 
 	public:
 
+		// initilises all the registers required for the interrupts to function except sei();
 		static void interrupts();
 
 		// This 16 bit timer is always running free. The interrupt handlers of the external interrupts(or anything else) may use it to keep track of time
