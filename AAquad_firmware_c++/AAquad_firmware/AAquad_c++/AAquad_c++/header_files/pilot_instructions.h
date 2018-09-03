@@ -19,7 +19,7 @@ class pilot_instructions{
 		float get_bank_angle() const;
 		float get_pitch_angle() const;
 		float get_yaw_rate() const;
-		float get_throttle_power() const;
+		uint8_t get_throttle_power() const;
 
 
 	private:
@@ -30,7 +30,7 @@ class pilot_instructions{
 		float bank_angle;
 		float pitch_angle;
 		float yaw_rate;	// expressed in degrees per second
-		float throttle_power; //expressed as a percentage
+		volatile uint8_t throttle_power; //expressed as a percentage
 
 
 

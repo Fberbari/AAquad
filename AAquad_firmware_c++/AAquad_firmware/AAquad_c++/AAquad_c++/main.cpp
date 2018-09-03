@@ -20,6 +20,7 @@
 */
 #include <util/delay.h>
 
+	volatile uint8_t motors = 0;
 
 	volatile uint16_t requested_aileron_pos = 0;
 	volatile uint16_t temp_timer_aileron = 0; // holds the time signature of the previous edge in the PWM capture
@@ -41,13 +42,13 @@ int main(void){
 	initialize::timers();
 	initialize::interrupts();
 	
-/*	
+
 	I2C_328pb i2c(0xFA); // 
 	
 	pilot_instructions pilot;
 	pilot.set_max_angle(30);
 	pilot.set_max_yaw_rate(45);	// this retrieves and holds the pilot's wishes
-*/
+
 	
 /*	
 	I2C_328pb sensor_I2C(2000);	// object created just for use in the sensor object
@@ -70,7 +71,7 @@ int main(void){
 */
 	sei();
 	
-	//int motors[4] = {0};
+
 	
 	while(1){
 	/*	
@@ -78,7 +79,7 @@ int main(void){
 		sense.read_gyro(sensor_I2C);	// all sensor data processed
 		sense.compute_position();
 	*/	
-		//pilot.compute();	// all pilot data processed
+		pilot.compute();	// all pilot data processed
 	/*	
 		bank_pid.setDesiredPoint(pilot.get_bank_angle());
 		pitch_pid.setDesiredPoint(pilot.get_pitch_angle());
@@ -86,7 +87,7 @@ int main(void){
 		PID::combine_data(bank_pid.refresh(sense.get_bank()), pitch_pid.refresh(sense.get_pitch), pilot.get_throttle_power());
 
 	*/
-		//motors[2] = pilot.get_throttle_power();
+		motors = pilot.get_throttle_power();
 		//pwm.pass(pwm_chip_I2c, motors);	
 		
 		
