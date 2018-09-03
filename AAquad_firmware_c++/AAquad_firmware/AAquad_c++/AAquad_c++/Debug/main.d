@@ -17,11 +17,7 @@ main.d main.o: .././main.cpp ../header_files/avr_compiler.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\pgmspace.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\util\delay.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\util\delay_basic.h \
- c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\math.h \
- ../header_files/pwm_in_vars.h ../header_files/avr_compiler.h \
- ../header_files/init.h ../header_files/I2C_328pb.h \
- ../header_files/pilot_instructions.h ../header_files/pwm_in_vars.h \
- ../header_files/pwm_chip.h ../header_files/I2C_328pb.h
+ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\math.h
 
 ../header_files/avr_compiler.h:
 
@@ -62,19 +58,3 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\util\delay_basic.h:
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\math.h:
-
-../header_files/pwm_in_vars.h:
-
-../header_files/avr_compiler.h:
-
-../header_files/init.h:
-
-../header_files/I2C_328pb.h:
-
-../header_files/pilot_instructions.h:
-
-../header_files/pwm_in_vars.h:
-
-../header_files/pwm_chip.h:
-
-../header_files/I2C_328pb.h:
