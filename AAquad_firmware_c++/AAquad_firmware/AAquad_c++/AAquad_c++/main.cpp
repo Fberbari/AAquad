@@ -41,13 +41,13 @@ int main(void){
 	initialize::timers();
 	initialize::interrupts();
 	
-	
+/*	
 	I2C_328pb i2c(0xFA); // 
 	
 	pilot_instructions pilot;
 	pilot.set_max_angle(30);
 	pilot.set_max_yaw_rate(45);	// this retrieves and holds the pilot's wishes
-	
+*/
 	
 /*	
 	I2C_328pb sensor_I2C(2000);	// object created just for use in the sensor object
@@ -63,12 +63,14 @@ int main(void){
 	pitch_pid.setOutputLowerLimit(-30);
 	pitch_pid.setOutputUpperLimit(30);
 	
-*/	I2C_328pb pwm_chip_I2c(0xAA);
+*/
+/*
+	I2C_328pb pwm_chip_I2c(0xAA);
 	pwm_chip pwm(pwm_chip_I2c, 10);
-
+*/
 	sei();
 	
-	int motors[4] = {0};
+	//int motors[4] = {0};
 	
 	while(1){
 	/*	
@@ -76,7 +78,7 @@ int main(void){
 		sense.read_gyro(sensor_I2C);	// all sensor data processed
 		sense.compute_position();
 	*/	
-		pilot.compute();	// all pilot data processed
+		//pilot.compute();	// all pilot data processed
 	/*	
 		bank_pid.setDesiredPoint(pilot.get_bank_angle());
 		pitch_pid.setDesiredPoint(pilot.get_pitch_angle());
@@ -84,8 +86,8 @@ int main(void){
 		PID::combine_data(bank_pid.refresh(sense.get_bank()), pitch_pid.refresh(sense.get_pitch), pilot.get_throttle_power());
 
 	*/
-		motors[2] = pilot.get_throttle_power();
-		pwm.pass(pwm_chip_I2c, motors);	
+		//motors[2] = pilot.get_throttle_power();
+		//pwm.pass(pwm_chip_I2c, motors);	
 		
 		
 	}

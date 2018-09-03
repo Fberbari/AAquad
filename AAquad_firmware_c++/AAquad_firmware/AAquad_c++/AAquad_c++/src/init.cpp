@@ -19,12 +19,27 @@ void initialize::interrupts(){
 	//pcint 1 (for pin B1)
 	PCICR |= (1 << PCIE1);
 	PCMSK0 |= (1 << PCINT1);
+	
+	// setting the pullup resistors on everything
+	DDRD &= ~(1 << 2);
+	PORTD |= (1 << 2);
+	
+	DDRC &= ~(1 << 3);
+	PORTC |= (1 << 3);
+	
+	DDRD &= ~(1 << 3);
+	PORTD |= (1 << 3);
+	
+	DDRD &= ~(1 << 4);
+	PORTD |= (1 << 4);
+	
+	
 
 }
 
 void initialize::timers(){
 
 	// by default the timer is set to normal mode
-	TCCR1B |= ( (1 <<CS11));	// timer will run with 8x prescaler and willoverrun 15 times/second
+	TCCR1B |= ( (1 << CS10));	// timer will run with 8x prescaler and willoverrun 15 times/second
 
 }
