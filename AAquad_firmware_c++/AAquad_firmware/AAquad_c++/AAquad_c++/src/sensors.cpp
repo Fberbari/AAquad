@@ -5,8 +5,8 @@
 sensors::sensors(I2C_328pb i2c){
 
 	i2c.start(); 
-	i2c.send_slave(0xB2);	// acc slave + w + autoincrement
-	i2c.send_reg(0x20);	// Control register 1
+	i2c.send_slave(0x32);	// acc slave + w
+	i2c.send_reg(0xA0);	// Control register 1 + autoincrement
 	i2c.send(0x67);	// all axis enable data refresh rate is 200Hz
 	i2c.send(0x0);	// CR2 default values
 	i2c.send(0x0);	// CR3 default values

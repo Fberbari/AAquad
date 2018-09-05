@@ -112,7 +112,7 @@ void I2C_328pb::send(int data){
 void I2C_328pb::get_next_byte(){
 
 
-	TWCR0 = ( (1 << TWINT) | (1 << TWEA) );
+	TWCR0 = ( (1 << TWEN) | (1 << TWINT) | (1 << TWEA));
 
 	while (! (TWCR0 & (1 << TWINT)) );
 /*
@@ -131,7 +131,7 @@ void I2C_328pb::get_next_byte(){
 void I2C_328pb::end_data_read(){
 
 
-	TWCR0 = ( (1 << TWINT) );
+	TWCR0 = ( (1 << TWEN) | (1 << TWINT) );
 
 	while (! (TWCR0 & (1 << TWINT)) );
 

@@ -14,8 +14,9 @@
 #include "I2C_328pb.h"
 #include "pilot_instructions.h"
 #include "pwm_chip.h"
-/*
+
 #include "sensors.h"
+/*
 #include "PID.h"
 */
 #include <util/delay.h>
@@ -43,7 +44,7 @@ int main(void){
 	initialize::interrupts();
 	
 
-	I2C_328pb i2c(0xFA); // 
+	I2C_328pb i2c(0xAA); // 
 	
 	pilot_instructions pilot;
 	pilot.set_max_angle(30);
@@ -51,8 +52,8 @@ int main(void){
 
 	
 
-	I2C_328pb sensor_I2C(2000);	// object created just for use in the sensor object
-	//sensors sense(sensor_I2C);
+	I2C_328pb sensor_I2C(0xAA);	// object created just for use in the sensor object
+	sensors sense(sensor_I2C);
 /*
 	PID bank_pid;
 	bank_pid.setWeights(0.5,0.5,0.5);
@@ -74,9 +75,11 @@ int main(void){
 
 	
 	while(1){
-	/*	
+		
+			
 		sense.read_acc(sensor_I2C);
 		sense.read_gyro(sensor_I2C);	// all sensor data processed
+	/*
 		sense.compute_position();
 	*/	
 		pilot.compute();	// all pilot data processed
