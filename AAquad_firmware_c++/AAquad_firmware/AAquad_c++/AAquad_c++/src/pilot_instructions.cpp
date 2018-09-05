@@ -13,18 +13,18 @@ void pilot_instructions::set_max_yaw_rate(uint8_t max_yaw_rate){
 }
 
 
-float pilot_instructions::get_bank_angle() const{
+int pilot_instructions::get_bank_angle() const{
 
 	return bank_angle;
 }
 
 
-float pilot_instructions::get_pitch_angle() const{
+int pilot_instructions::get_pitch_angle() const{
 
 	return pitch_angle;
 }
 
-float pilot_instructions::get_yaw_rate() const{
+int pilot_instructions::get_yaw_rate() const{
 
 	return yaw_rate;
 }
@@ -78,10 +78,18 @@ void pilot_instructions::compute(void){
 	//yaw_rate = ( requested_rudder_pos / 6553 ) * max_yaw_rate;	// computes the percentage of the max the pilot wants
 	
 	
-	float temp_pitch_angle = ( (requested_elevator_pos - 1110) / 800 ) * max_angle;	// computes the percentage of the max the pilot wants
-	pitch_angle = (uint8_t) temp_pitch_angle;
+	float temp_pitch_angle = (requested_elevator_pos - 1110.f);	// computes the percentage of the max the pilot wants
+	temp_pitch_angle /= 800;
+	temp_pitch_angle *= 2 * max_angle;
+	temp_pitch_angle -= max_angle;
+	pitch_angle = (int) temp_pitch_angle;
+	
+	
 
-	float temp_bank_angle = ( (requested_aileron_pos - 1120)  / 800) * max_angle;	// computes the percentage of the max the pilot wants
-	bank_angle = (uint8_t) temp_bank_angle;
+	float temp_bank_angle = (requested_aileron_pos - 1120.f);	// computes the percentage of the max the pilot wants
+	temp_bank_angle /= 800;
+	temp_bank_angle *= 2 * max_angle;
+	temp_bank_angle -= max_angle;
+	bank_angle = (int) temp_bank_angle + 2;
 
 }

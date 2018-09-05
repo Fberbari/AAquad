@@ -16,9 +16,9 @@ class pilot_instructions{
 		void compute(void);
 
 
-		float get_bank_angle() const;
-		float get_pitch_angle() const;
-		float get_yaw_rate() const;
+		int get_bank_angle() const;
+		int get_pitch_angle() const;
+		int get_yaw_rate() const;
 		uint8_t get_throttle_power() const;
 
 
@@ -27,8 +27,8 @@ class pilot_instructions{
 		uint8_t max_angle;	// defines the maximum angle the quadcopter should be ordered to
 		uint8_t max_yaw_rate;
 
-		uint8_t bank_angle;
-		uint8_t pitch_angle;
+		int bank_angle;
+		int pitch_angle;
 		int yaw_rate;	// expressed in degrees per second
 		uint8_t throttle_power; //expressed as a percentage
 
