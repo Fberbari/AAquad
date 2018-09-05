@@ -162,6 +162,10 @@
 
 
 13. PCINTS are not functioning.
+	
+	status: resolved: wrong registers were configured
+
+14. UNCRITICAL accelerometer sensitivity seems to be different than what the datasheet produces.
 
 
 SOFTWARE

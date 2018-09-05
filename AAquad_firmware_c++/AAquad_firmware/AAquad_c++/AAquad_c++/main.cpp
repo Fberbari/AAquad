@@ -79,9 +79,9 @@ int main(void){
 			
 		sense.read_acc(sensor_I2C);
 		sense.read_gyro(sensor_I2C);	// all sensor data processed
-	/*
+	
 		sense.compute_position();
-	*/	
+	
 		pilot.compute();	// all pilot data processed
 	/*	
 		bank_pid.setDesiredPoint(pilot.get_bank_angle());

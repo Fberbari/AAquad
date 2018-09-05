@@ -19,15 +19,15 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
   7 .debug_abbrev 0000116d  00000000  00000000  000045f0  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   00000dfa  00000000  00000000  0000575d  2**0
+  8 .debug_line   00000e00  00000000  00000000  0000575d  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_frame  00000498  00000000  00000000  00006558  2**2
+  9 .debug_frame  00000498  00000000  00000000  00006560  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    00000c86  00000000  00000000  000069f0  2**0
+ 10 .debug_str    00000c86  00000000  00000000  000069f8  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    00000cbf  00000000  00000000  00007676  2**0
+ 11 .debug_loc    00000cd5  00000000  00000000  0000767e  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 00000140  00000000  00000000  00008335  2**0
+ 12 .debug_ranges 00000140  00000000  00000000  00008353  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -1562,7 +1562,7 @@ sensors::sensors(I2C_328pb i2c){
      974:	ce 01       	movw	r24, r28
      976:	01 96       	adiw	r24, 0x01	; 1
      978:	0e 94 2c 02 	call	0x458	; 0x458 <_ZN9I2C_328pb4sendEi>
-	i2c.send(0x10);	// CR4  +- 4g and 8mg/digit
+	i2c.send(0x10);	// CR4  +- 4g and 8mg/digit, The value 32767 corresponds to 4 g's
      97c:	60 e1       	ldi	r22, 0x10	; 16
      97e:	70 e0       	ldi	r23, 0x00	; 0
      980:	ce 01       	movw	r24, r28
@@ -1592,8 +1592,8 @@ sensors::sensors(I2C_328pb i2c){
      9a8:	ce 01       	movw	r24, r28
      9aa:	01 96       	adiw	r24, 0x01	; 1
      9ac:	0e 94 21 02 	call	0x442	; 0x442 <_ZN9I2C_328pb8send_regEi>
-	i2c.send(0x15);	// all axis enable data refresh rate is 100Hz (a lot of other params also affected)
-     9b0:	65 e1       	ldi	r22, 0x15	; 21
+	i2c.send(0x0F);	// all axis enable data refresh rate is 100Hz (a lot of other params also affected)
+     9b0:	6f e0       	ldi	r22, 0x0F	; 15
      9b2:	70 e0       	ldi	r23, 0x00	; 0
      9b4:	ce 01       	movw	r24, r28
      9b6:	01 96       	adiw	r24, 0x01	; 1
@@ -2017,8 +2017,9 @@ void sensors::compute_position(){
      c50:	0e 94 de 05 	call	0xbbc	; 0xbbc <_ZN7sensors8get_timeEv>
      c54:	6b 01       	movw	r12, r22
      c56:	7c 01       	movw	r14, r24
+	
 
-
+	
 	pitch += (gyro_y_data * GYRO_SENSITIVITY * time_between_measurements);
      c58:	ed 85       	ldd	r30, Y+13	; 0x0d
      c5a:	fe 85       	ldd	r31, Y+14	; 0x0e
@@ -2083,7 +2084,6 @@ void sensors::compute_position(){
      cde:	71 8b       	std	Z+17, r23	; 0x11
      ce0:	82 8b       	std	Z+18, r24	; 0x12
      ce2:	93 8b       	std	Z+19, r25	; 0x13
-
 	yaw_rate = (gyro_z_data * GYRO_SENSITIVITY );
      ce4:	62 85       	ldd	r22, Z+10	; 0x0a
      ce6:	73 85       	ldd	r23, Z+11	; 0x0b
@@ -2106,8 +2106,7 @@ void sensors::compute_position(){
 
 
 
-
-	R = sqrt( square( acc_x_data ) + square( acc_y_data ) + square( acc_z_data ) ) * ACC_SENSITIVITY;
+	R = sqrt( square( acc_x_data ) + square( acc_y_data ) + square( acc_z_data ) );
      d0c:	20 80       	ld	r2, Z
      d0e:	31 80       	ldd	r3, Z+1	; 0x01
      d10:	b1 01       	movw	r22, r2
@@ -2159,16 +2158,17 @@ void sensors::compute_position(){
      d7a:	b6 01       	movw	r22, r12
      d7c:	0e 94 b4 07 	call	0xf68	; 0xf68 <__addsf3>
      d80:	0e 94 6d 0a 	call	0x14da	; 0x14da <sqrt>
-     d84:	2f e6       	ldi	r18, 0x6F	; 111
-     d86:	32 e1       	ldi	r19, 0x12	; 18
-     d88:	43 e0       	ldi	r20, 0x03	; 3
-     d8a:	5c e3       	ldi	r21, 0x3C	; 60
+	R *= ACC_SENSITIVITY;
+     d84:	20 e9       	ldi	r18, 0x90	; 144
+     d86:	39 ef       	ldi	r19, 0xF9	; 249
+     d88:	40 e0       	ldi	r20, 0x00	; 0
+     d8a:	59 e3       	ldi	r21, 0x39	; 57
      d8c:	0e 94 fa 09 	call	0x13f4	; 0x13f4 <__mulsf3>
      d90:	69 83       	std	Y+1, r22	; 0x01
      d92:	7a 83       	std	Y+2, r23	; 0x02
      d94:	8b 83       	std	Y+3, r24	; 0x03
      d96:	9c 83       	std	Y+4, r25	; 0x04
-
+	
 
 	if ( abs(R) > 1.5 || abs(R) < 0.5 ){
      d98:	0e 94 b2 08 	call	0x1164	; 0x1164 <__fixsfsi>
@@ -2261,6 +2261,8 @@ void sensors::compute_position(){
      e4c:	7a 87       	std	Y+10, r23	; 0x0a
      e4e:	8b 87       	std	Y+11, r24	; 0x0b
      e50:	9c 87       	std	Y+12, r25	; 0x0c
+
+
 
 
 

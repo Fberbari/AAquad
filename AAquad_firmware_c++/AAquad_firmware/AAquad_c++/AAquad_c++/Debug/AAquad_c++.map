@@ -812,7 +812,7 @@ END GROUP
  .debug_abbrev  0x00000da1      0x1c5 src/pwm_chip.o
  .debug_abbrev  0x00000f66      0x207 src/sensors.o
 
-.debug_line     0x00000000      0xdfa
+.debug_line     0x00000000      0xe00
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x00000000      0x1a5 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/Atmel/ATmega_DFP/1.2.209/gcc/dev/atmega328pb/avr5/crtatmega328pb.o
  .debug_line    0x000001a5      0x2d2 main.o
@@ -820,7 +820,7 @@ END GROUP
  .debug_line    0x000005fd       0xcb src/init.o
  .debug_line    0x000006c8      0x1da src/pilot_instructions.o
  .debug_line    0x000008a2      0x227 src/pwm_chip.o
- .debug_line    0x00000ac9      0x331 src/sensors.o
+ .debug_line    0x00000ac9      0x337 src/sensors.o
 
 .debug_frame    0x00000000      0x498
  *(.debug_frame)
@@ -847,13 +847,13 @@ END GROUP
  .debug_str     0x00000bfc       0x8a src/sensors.o
                                 0x533 (size before relaxing)
 
-.debug_loc      0x00000000      0xcbf
+.debug_loc      0x00000000      0xcd5
  *(.debug_loc)
  .debug_loc     0x00000000      0x296 main.o
  .debug_loc     0x00000296      0x156 src/I2C_328pb.o
  .debug_loc     0x000003ec      0x249 src/pilot_instructions.o
  .debug_loc     0x00000635      0x1d6 src/pwm_chip.o
- .debug_loc     0x0000080b      0x4b4 src/sensors.o
+ .debug_loc     0x0000080b      0x4ca src/sensors.o
 
 .debug_macinfo
  *(.debug_macinfo)
