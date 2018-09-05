@@ -71,10 +71,17 @@ void pilot_instructions::compute(void){
 
 
 
-	//bank_angle = ( requested_aileron_pos / 6553 ) * max_angle;	// computes the percentage of the max the pilot wants
-	//pitch_angle = (requested_elevator_pos / 6553 ) * max_angle;	// computes the percentage of the max the pilot wants
-	//yaw_rate = ( requested_rudder_pos / 6553 ) * max_yaw_rate;	// computes the percentage of the max the pilot wants
-	throttle_power = ((requested_throttle_pos - 1122) / 8) ;	// computes the percentage of the max the pilot wants
 
+
+	throttle_power = ((requested_throttle_pos - 1015) / 8);	// computes the percentage of the max the pilot wants
+	
+	//yaw_rate = ( requested_rudder_pos / 6553 ) * max_yaw_rate;	// computes the percentage of the max the pilot wants
+	
+	
+	float temp_pitch_angle = ( (requested_elevator_pos - 1110) / 800 ) * max_angle;	// computes the percentage of the max the pilot wants
+	pitch_angle = (uint8_t) temp_pitch_angle;
+
+	float temp_bank_angle = ( (requested_aileron_pos - 1120)  / 800) * max_angle;	// computes the percentage of the max the pilot wants
+	bank_angle = (uint8_t) temp_bank_angle;
 
 }

@@ -88,14 +88,14 @@ void pwm_chip::pass(I2C_328pb i2c, int* motors){
 
 }
 
-void pwm_chip::encode_motors(uint8_t motor, int* motors, uint8_t*instruction){
+void pwm_chip::encode_motors(uint8_t motor, int* motors, uint8_t* instruction){
 	
-	float temp = motors[motor]*2.05;	// the actualslope of this curve is 2.05, 100 times larger prevents the .05from falling off
+	uint16_t temp = motors[motor]*2;	// the actualslope of this curve is 2.05
 	
 	temp += 205;	// 205 is the value corresponding to 0 for the esc
 	
-	instruction[0] = ( (uint16_t)temp & 0xff );	// conserves only the low byte
+	instruction[0] = ( temp & 0xff );	// conserves only the low byte
 	
-	instruction[1] = ( (uint16_t)temp >> 8);	// conserves only the high half-byte
+	instruction[1] = ( temp >> 8);	// conserves only the high half-byte
 	
 }

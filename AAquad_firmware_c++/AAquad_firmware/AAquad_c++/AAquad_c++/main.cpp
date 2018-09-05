@@ -20,7 +20,7 @@
 */
 #include <util/delay.h>
 
-	volatile uint8_t motors = 0;
+	int motors[4] = {0};
 
 	volatile uint16_t requested_aileron_pos = 0;
 	volatile uint16_t temp_timer_aileron = 0; // holds the time signature of the previous edge in the PWM capture
@@ -50,10 +50,10 @@ int main(void){
 	pilot.set_max_yaw_rate(45);	// this retrieves and holds the pilot's wishes
 
 	
-/*	
+
 	I2C_328pb sensor_I2C(2000);	// object created just for use in the sensor object
-	sensors sense(sensor_I2C);
-	
+	//sensors sense(sensor_I2C);
+/*
 	PID bank_pid;
 	bank_pid.setWeights(0.5,0.5,0.5);
 	bank_pid.setOutputLowerLimit(-30);
@@ -65,10 +65,10 @@ int main(void){
 	pitch_pid.setOutputUpperLimit(30);
 	
 */
-/*
+
 	I2C_328pb pwm_chip_I2c(0xAA);
 	pwm_chip pwm(pwm_chip_I2c, 10);
-*/
+
 	sei();
 	
 
@@ -87,10 +87,12 @@ int main(void){
 		PID::combine_data(bank_pid.refresh(sense.get_bank()), pitch_pid.refresh(sense.get_pitch), pilot.get_throttle_power());
 
 	*/
-		motors = pilot.get_throttle_power();
-		//pwm.pass(pwm_chip_I2c, motors);	
+		motors[0] = pilot.get_throttle_power();
+		motors[1] = pilot.get_bank_angle();
+		motors[2] = pilot.get_pitch_angle();
+		pwm.pass(pwm_chip_I2c, motors);	
 		
-		
+		_delay_ms(10);
 	}
 
 
@@ -101,7 +103,7 @@ return 0;
 
 
 
-ISR(INT1_vect){
+ISR(INT0_vect){
 	
 		uint16_t temp = TCNT1;
 		
@@ -125,7 +127,7 @@ ISR(INT1_vect){
 	
 }
 
-ISR(INT0_vect){
+ISR(INT1_vect){
 	
 		temp0 = TCNT1;
 		
@@ -151,7 +153,7 @@ ISR(INT0_vect){
 
 
 
-ISR(PCINT0_vect){
+ISR(PCINT1_vect){
 
 	uint16_t temp = TCNT1;
 		
@@ -174,7 +176,7 @@ ISR(PCINT0_vect){
 
 }
 
-ISR(PCINT1_vect){
+ISR(PCINT2_vect){
 
 	uint16_t temp = TCNT1;
 	

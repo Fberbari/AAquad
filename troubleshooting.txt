@@ -158,10 +158,10 @@
 
 12. Not able to properly read the pwm input. 
 	
-	
+	status: resolved. The problem was either with timer configs or with interrupts that were associated with floating pins
 
 
-
+13. PCINTS are not functioning.
 
 
 SOFTWARE

@@ -27,10 +27,10 @@ class pilot_instructions{
 		uint8_t max_angle;	// defines the maximum angle the quadcopter should be ordered to
 		uint8_t max_yaw_rate;
 
-		float bank_angle;
-		float pitch_angle;
-		float yaw_rate;	// expressed in degrees per second
-		volatile uint8_t throttle_power; //expressed as a percentage
+		uint8_t bank_angle;
+		uint8_t pitch_angle;
+		int yaw_rate;	// expressed in degrees per second
+		uint8_t throttle_power; //expressed as a percentage
 
 
 

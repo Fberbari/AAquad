@@ -13,14 +13,15 @@ void initialize::interrupts(){
 	EICRA |= (1 << ISC10);	// will fire at any logical change
 
 	// pcint 0 (for pin C3)
-	PCICR |= (1 << PCIE0);
+	PCICR |= (1 << PCIE1);
 	PCMSK1 |= (1 << PCINT11);
 
 	//pcint 1 (for pin B1)
-	PCICR |= (1 << PCIE1);
-	PCMSK0 |= (1 << PCINT1);
+	PCICR |= (1 << PCIE2);
+	PCMSK2 |= (1 << PCINT17);
 	
-	// setting the pullup resistors on everything
+	// setting the pullup resistors on everything (will not be necessary once all wires are connected
+
 	DDRD &= ~(1 << 2);
 	PORTD |= (1 << 2);
 	
@@ -40,6 +41,6 @@ void initialize::interrupts(){
 void initialize::timers(){
 
 	// by default the timer is set to normal mode
-	TCCR1B |= ( (1 << CS10));	// timer will run with 8x prescaler and willoverrun 15 times/second
+	TCCR1B |= ( (1 << CS10));	// timer will run without prescaler and willoverrun 15 times/second
 
 }
