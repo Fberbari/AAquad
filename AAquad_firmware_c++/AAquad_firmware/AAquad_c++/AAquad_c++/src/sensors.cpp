@@ -23,6 +23,13 @@ sensors::sensors(I2C_328pb i2c){
 	i2c.stop();
 
 			// default sensitivity is 8.75 mdps/digit
+			
+			
+	pitch = 0.f;
+	roll = 0.f;
+	yaw_rate = 0.f;
+
+	time_of_previous_scan = TCNT1;
 
 }
 
@@ -92,11 +99,10 @@ void sensors::read_gyro(I2C_328pb i2c){
 
 void sensors::compute_position(){
 
-	float R;	// what the accelerometer thinks the total acceleration is
-	float trust_factor; // to what degree do I trust the accelerometer's readings
+	volatile float R;	// what the accelerometer thinks the total acceleration is
+	volatile float trust_factor; // to what degree do I trust the accelerometer's readings
 	const float time_between_measurements = get_time();
-	
-
+ 
 	
 	pitch += (gyro_y_data * GYRO_SENSITIVITY * time_between_measurements);
 	roll += (gyro_x_data * GYRO_SENSITIVITY * time_between_measurements);
@@ -108,26 +114,29 @@ void sensors::compute_position(){
 	R *= ACC_SENSITIVITY;
 	
 
-	if ( abs(R) > 1.5 || abs(R) < 0.5 ){
+	if ( R > 1.5 || R < 0.5 ){
 
 		return;	// there is too much external factor for the accelerometer to be of any use
 
 	}
 
 
-	float acc_pitch_angle = asin( 1000 * acc_y_data / R);	// accounts for +- sign 0 is the level value
-	float acc_roll_angle = asin( 1000 * acc_x_data / R);	// accounts for +- sign 0 is the level value
+	float acc_pitch_angle = asin(  acc_y_data / (R*8130) );	// accounts for +- sign 0 is the level value
+	float acc_roll_angle = asin( acc_x_data / (R*8130) );	// accounts for +- sign 0 is the level value
+	
+	acc_pitch_angle *= 57.3;
+	acc_roll_angle *= 57.3;	// conversion to degrees instead of radians.
 
 
 
-
-
-	trust_factor = ( 1 - abs(1 - R) ) / 10;
+	trust_factor = ( 1 - fabs(1 - R) ) / 10;
 
 
 	pitch = (pitch * (1 - trust_factor) + (acc_pitch_angle * trust_factor) );
 	roll = (roll * (1 - trust_factor) + (acc_roll_angle * trust_factor) );
-
+	
+	
+	
 	return;
 
 
@@ -138,7 +147,7 @@ float sensors:: get_time(){
 
 	uint16_t time = TCNT1;
 	
-	float result;
+	volatile float result;
 	
 
 	if (TCNT1 < time_of_previous_scan){

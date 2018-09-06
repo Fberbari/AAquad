@@ -81,8 +81,11 @@ int main(void){
 		sense.read_gyro(sensor_I2C);	// all sensor data processed
 	
 		sense.compute_position();
-	
+		
 		pilot.compute();	// all pilot data processed
+		
+		
+		
 	/*	
 		bank_pid.setDesiredPoint(pilot.get_bank_angle());
 		pitch_pid.setDesiredPoint(pilot.get_pitch_angle());
@@ -90,9 +93,7 @@ int main(void){
 		PID::combine_data(bank_pid.refresh(sense.get_bank()), pitch_pid.refresh(sense.get_pitch), pilot.get_throttle_power());
 
 	*/
-		motors[0] = pilot.get_throttle_power();
-		motors[1] = pilot.get_bank_angle();
-		motors[2] = pilot.get_pitch_angle();
+
 		pwm.pass(pwm_chip_I2c, motors);	
 		
 		_delay_ms(10);
