@@ -7,7 +7,6 @@ I2C_328pb::I2C_328pb(int bit_rate){
 
 	TWBR0 = bit_rate;
 	
-	PORTC |= ((1 << 4) | (1 << 5));
 	
 
 }

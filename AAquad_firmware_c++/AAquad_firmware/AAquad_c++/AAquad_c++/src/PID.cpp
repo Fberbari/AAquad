@@ -51,16 +51,16 @@ float PID::refresh(const float &feedback_input) {
 	last_error = current_error;
 		
 	current_error = set_point - feedback_input;	
-
+	
+	
 	last_output = output;	
-
+	
 
 	// the derivative is computed in this line
 	// the integral, however, was computed one cycle ago
 	output = Kp*current_error + Ki*integral + Kd* (current_error-last_error)/time_elapsed;	// calculate the new output
 		
 		
-
 
 	if ( (output > output_upper_limit) || (output < output_lower_limit)) {
 
@@ -95,21 +95,34 @@ float PID::refresh(const float &feedback_input) {
 
 void PID::update_time(){
 
-	if (TCNT1 < this-> previous_clock){
+		
+	uint16_t time = TCNT1;
+	
+	volatile float result;
+	
 
-		time_elapsed = (float)(0xffff - previous_clock + TCNT1) / 1000.f; 
+	if (TCNT1 < time_of_previous_scan){
+
+		result = 0xffff - time_of_previous_scan + time ;
 
 	}
 
 	else{
 
-		time_elapsed = (float)(TCNT1 - previous_clock) / 1000.f ; 
-
+		result = time - time_of_previous_scan;
 	}
 
-	this-> previous_clock = TCNT1;
 
+	result /= (float)TIMER_BIT_RATE;
+
+	time_of_previous_scan = time;
+
+	time_elapsed = result;
+	
+	
 }
+
+
 
 void PID::combine_data(float bank_percentage, float pitch_percentage, float throttle_percentage){
 

@@ -1,9 +1,15 @@
 #include "avr_compiler.h"
 #include <math.h>
 
+
+
+
+
+
 #ifndef PID_H
 #define PID_H
 
+#define TIMER_BIT_RATE 1000000	// LSB per second
 
 class PID {
 
@@ -57,7 +63,7 @@ class PID {
             static void combine_data(float bank_percentage, float pitch_percentage, float throttle_percentage);
 
             // returns the pointer to the motors array for use in the Pwm class
-            static int* get_motor() const;
+            int* get_motor() const;
 
         private:
 
@@ -83,7 +89,7 @@ class PID {
             
 
             float time_elapsed;
-            uint16_t previous_clock;
+            uint16_t time_of_previous_scan;
 
 
 };

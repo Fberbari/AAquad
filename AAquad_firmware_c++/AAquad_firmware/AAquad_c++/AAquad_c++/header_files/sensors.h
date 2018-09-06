@@ -7,7 +7,7 @@
 
 
 #define GYRO_SENSITIVITY 0.00875	// unit is mdps/digit
-#define TIMER_BIT_RATE 1000000	// bits per second
+#define TIMER_BIT_RATE 1000000	// LSB per second
 #define ACC_SENSITIVITY 0.000123	// ( 8md/digit is what is is supposed to be. Tests revealed 1g corresponds to 1130 or so which is consistant with the +- 4g's requested)
 
 class sensors{

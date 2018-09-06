@@ -8,6 +8,8 @@ src\I2C_328pb.cpp
 
 src\init.cpp
 
+src\PID.cpp
+
 src\pilot_instructions.cpp
 
 src\pwm_chip.cpp

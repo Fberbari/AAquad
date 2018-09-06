@@ -202,6 +202,9 @@
     <Compile Include="src\init.cpp">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\PID.cpp">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\pilot_instructions.cpp">
       <SubType>compile</SubType>
     </Compile>

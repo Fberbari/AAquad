@@ -14,8 +14,8 @@
 #include "I2C_328pb.h"
 #include "pilot_instructions.h"
 #include "pwm_chip.h"
-
 #include "sensors.h"
+#include "PID.h"
 /*
 #include "PID.h"
 */
@@ -54,18 +54,18 @@ int main(void){
 
 	I2C_328pb sensor_I2C(0xAA);	// object created just for use in the sensor object
 	sensors sense(sensor_I2C);
-/*
+
 	PID bank_pid;
 	bank_pid.setWeights(0.5,0.5,0.5);
-	bank_pid.setOutputLowerLimit(-30);
-	bank_pid.setOutputUpperLimit(30);
-	
+	bank_pid.setOutputLowerLimit(-50);
+	bank_pid.setOutputUpperLimit(50);
+
 	PID pitch_pid;
 	pitch_pid.setWeights(0.5,0.5,0.5);
-	pitch_pid.setOutputLowerLimit(-30);
-	pitch_pid.setOutputUpperLimit(30);
+	pitch_pid.setOutputLowerLimit(-50);
+	pitch_pid.setOutputUpperLimit(50);
 	
-*/
+
 
 	I2C_328pb pwm_chip_I2c(0xAA);
 	pwm_chip pwm(pwm_chip_I2c, 10);
@@ -86,17 +86,19 @@ int main(void){
 		
 		
 		
-	/*	
+	
 		bank_pid.setDesiredPoint(pilot.get_bank_angle());
-		pitch_pid.setDesiredPoint(pilot.get_pitch_angle());
-		
-		PID::combine_data(bank_pid.refresh(sense.get_bank()), pitch_pid.refresh(sense.get_pitch), pilot.get_throttle_power());
 
+		pitch_pid.setDesiredPoint(pilot.get_pitch_angle());
+	/*
+		PID::combine_data(bank_pid.refresh(sense.get_roll()), pitch_pid.refresh(sense.get_pitch), pilot.get_throttle_power());
 	*/
 
+	/*
 		pwm.pass(pwm_chip_I2c, motors);	
-		
+	*/	
 		_delay_ms(10);
+	
 	}
 
 

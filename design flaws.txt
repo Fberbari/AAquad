@@ -17,3 +17,17 @@
 9. use 2 different I2C busses when using a level shifter
 
 10. spacing between header pins should fit a breadboard.
+
+
+
+
+
+
+
+
+
+
+
+
+
+NEgotiation genius principles+ECE 209 first lecture integrative thinking should be used
