@@ -176,3 +176,6 @@ SOFTWARE
 	solved: the #ifndef, #def i used had the same name as the class so the preprocessor was messing stuff up. 
 
 
+2. Functions of a class were not able to recognise a static array declared in the class.
+	
+	solved: The array neede to be declared in the header file but initialised in the .cpp file

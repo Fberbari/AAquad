@@ -16,9 +16,7 @@
 #include "pwm_chip.h"
 #include "sensors.h"
 #include "PID.h"
-/*
-#include "PID.h"
-*/
+
 #include <util/delay.h>
 
 	int motors[4] = {0};
@@ -39,6 +37,7 @@
 	
 
 int main(void){
+	
 
 	initialize::timers();
 	initialize::interrupts();
@@ -90,9 +89,10 @@ int main(void){
 		bank_pid.setDesiredPoint(pilot.get_bank_angle());
 
 		pitch_pid.setDesiredPoint(pilot.get_pitch_angle());
-	/*
-		PID::combine_data(bank_pid.refresh(sense.get_roll()), pitch_pid.refresh(sense.get_pitch), pilot.get_throttle_power());
-	*/
+		
+	
+		PID::combine_data( bank_pid.refresh(sense.get_roll() ), pitch_pid.refresh(sense.get_pitch() ), pilot.get_throttle_power() );
+	
 
 	/*
 		pwm.pass(pwm_chip_I2c, motors);	
@@ -133,6 +133,8 @@ ISR(INT0_vect){
 	
 }
 
+/*
+
 ISR(INT1_vect){
 	
 		temp0 = TCNT1;
@@ -152,8 +154,6 @@ ISR(INT1_vect){
 		
 		temp_timer_throttle = temp0;
 		
-		
-		// here, there is a chance that the value stored in requested throttle is actually (0xffff - actual requested throttle) this needs to be fixed in the while loop, it has been avoided here to kep the ISR short.
 }
 
 
@@ -181,6 +181,8 @@ ISR(PCINT1_vect){
 	
 
 }
+
+*/
 
 ISR(PCINT2_vect){
 

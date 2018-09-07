@@ -60,12 +60,14 @@ class PID {
             // this function should be called with bank_pid.refresh and pitch_pid.refresh as arguments.
             // Call it like PID::combine_data
             // currently does nothing with yaw_rate
-            static void combine_data(float bank_percentage, float pitch_percentage, float throttle_percentage);
+            static void combine_data(float bank_number, float pitch_number, float throttle_percentage);
 
             // returns the pointer to the motors array for use in the Pwm class
-            int* get_motor() const;
+            static int* get_motor();
 
-        private:
+       
+	   
+	    private:
 
 
             // updates the time since the last computation

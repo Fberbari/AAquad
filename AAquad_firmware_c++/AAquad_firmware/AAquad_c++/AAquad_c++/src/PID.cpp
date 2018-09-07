@@ -1,15 +1,17 @@
 #include "PID.h"
 
 
-
 PID::PID(){
 
     last_error = 0;
 	current_error = 0;
     last_output = 0;
     integral = 0;
+	
 }
-        
+ 
+// initialising this static array is required      
+int PID::motor[4] = {0};
 
 
 void PID::setWeights(const float &Kp, const float &Ki, const float &Kd) {
@@ -124,18 +126,20 @@ void PID::update_time(){
 
 
 
-void PID::combine_data(float bank_percentage, float pitch_percentage, float throttle_percentage){
+void PID::combine_data(float bank_number, float pitch_number, float throttle_percentage){
 
 	//heavily depends on how the accelerometer and gyro are pointed and how the motors are plugged in.
+	
 
-	motor[0] = (int) (bank_percentage + pitch_percentage) * throttle_percentage / 200 ;
+	motor[0] = (int) (bank_number + pitch_number) * throttle_percentage / 200 ;
 
-	motor[1] = (int) (bank_percentage - pitch_percentage) * throttle_percentage / 200 ;
+	motor[1] = (int) (bank_number - pitch_number) * throttle_percentage / 200 ;
 
-	motor[2] = (int) (-bank_percentage + pitch_percentage) * throttle_percentage / 200;
+	motor[2] = (int) (-bank_number + pitch_number) * throttle_percentage / 200; // 200 because 100 is used to convert the throttle percentage
 
-	motor[3] = (int) (-bank_percentage - pitch_percentage) * throttle_percentage / 200;
+	motor[3] = (int) (-bank_number - pitch_number) * throttle_percentage / 200;
+
 
 }
 
-int* PID::get_motor() const{ return motor; }
+int* PID::get_motor(){ return motor; }
