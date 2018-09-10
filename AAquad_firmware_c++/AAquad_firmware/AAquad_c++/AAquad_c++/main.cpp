@@ -27,10 +27,10 @@
 	volatile uint16_t requested_elevator_pos = 0;
 	volatile uint16_t temp_timer_elevator = 0; 
 
-	volatile uint16_t requested_rudder_pos = 0;
+	volatile uint16_t requested_rudder_pos = 1110;
 	volatile uint16_t temp_timer_rudder = 0;
 
-	volatile uint16_t requested_throttle_pos = 0;
+	volatile uint16_t requested_throttle_pos = 1500;
 	volatile uint16_t temp_timer_throttle = 0; 
 
 	volatile uint16_t temp0;
@@ -55,12 +55,12 @@ int main(void){
 	sensors sense(sensor_I2C);
 
 	PID bank_pid;
-	bank_pid.setWeights(0.5,0.5,0.5);
+	bank_pid.setWeights(3,0.05,0.005);
 	bank_pid.setOutputLowerLimit(-50);
 	bank_pid.setOutputUpperLimit(50);
 
 	PID pitch_pid;
-	pitch_pid.setWeights(0.5,0.5,0.5);
+	pitch_pid.setWeights(0.5,0.5,0.005);
 	pitch_pid.setOutputLowerLimit(-50);
 	pitch_pid.setOutputUpperLimit(50);
 	
@@ -71,10 +71,12 @@ int main(void){
 
 	sei();
 	
-
+	volatile int crap[3];
+	volatile int cnt = 0;
 	
 	while(1){
 		
+		cnt ++;
 			
 		sense.read_acc(sensor_I2C);
 		sense.read_gyro(sensor_I2C);	// all sensor data processed
@@ -82,22 +84,26 @@ int main(void){
 		sense.compute_position();
 		
 		pilot.compute();	// all pilot data processed
-		
+
 		
 		
 	
 		bank_pid.setDesiredPoint(pilot.get_bank_angle());
-
 		pitch_pid.setDesiredPoint(pilot.get_pitch_angle());
-		
 	
-		PID::combine_data( bank_pid.refresh(sense.get_roll() ), pitch_pid.refresh(sense.get_pitch() ), pilot.get_throttle_power() );
+	//crap[0] = (int) bank_pid.refresh(sense.get_roll());
+	//crap[1] =(int) pitch_pid.refresh(sense.get_pitch());
+	
+	PID::combine_data( bank_pid.refresh(sense.get_roll() ), pitch_pid.refresh(sense.get_pitch() ), pilot.get_throttle_power() );
 	
 
-	/*
-		pwm.pass(pwm_chip_I2c, motors);	
-	*/	
-		_delay_ms(10);
+	
+	
+
+	
+		pwm.pass(pwm_chip_I2c, PID::get_motor());	
+		
+		_delay_us(10);
 	
 	}
 

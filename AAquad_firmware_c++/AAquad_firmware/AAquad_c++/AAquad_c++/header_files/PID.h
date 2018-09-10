@@ -81,6 +81,7 @@ class PID {
             float set_point;
             float Kp, Ki, Kd;
             float integral;
+			float derivative;
             float interval;
             float output_upper_limit;
             float output_lower_limit;

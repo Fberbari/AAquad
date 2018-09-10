@@ -179,3 +179,5 @@ SOFTWARE
 2. Functions of a class were not able to recognise a static array declared in the class.
 	
 	solved: The array neede to be declared in the header file but initialised in the .cpp file
+
+3. Too much noise factored into the derivative and the integral. Occusionally, big hop in the proportional factor aswell.

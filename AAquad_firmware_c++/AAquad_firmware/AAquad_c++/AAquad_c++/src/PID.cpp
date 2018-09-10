@@ -49,46 +49,58 @@ float PID::refresh(const float &feedback_input) {
 
 	update_time();	// get the time for integral and derivative purposes
 
-		
-	last_error = current_error;
-		
-	current_error = set_point - feedback_input;	
+	volatile float crap; 
+	static int cnt = 0;
+	cnt++;
 	
 	
-	last_output = output;	
+	last_error = current_error;// this happens no matter what, every cycle
+	current_error = set_point - feedback_input;
 	
-
-	// the derivative is computed in this line
-	// the integral, however, was computed one cycle ago
-	output = Kp*current_error + Ki*integral + Kd* (current_error-last_error)/time_elapsed;	// calculate the new output
+	
+	// derivative must be refreshed every cycle
+	derivative = (current_error-last_error)/time_elapsed;
+	
+	
+	//only if the value that will be added to the integral is reasonable will it be added. Otherwise, the integral will be corrupted	
+	if(  fabs((current_error + last_error) * time_elapsed /2.f) < 2){	
 		
-		
-
-	if ( (output > output_upper_limit) || (output < output_lower_limit)) {
-
-			
-		if (fabs(Ki*integral) > fabs(current_error)) {	// integral wind up, do not update the integral further
-
-				
-			if (output > output_upper_limit){
-
-				return output_upper_limit;	
-			}
-
-
-			else if (output < output_lower_limit){
-
-				return output_lower_limit;
-			}
-				
-		}
+		integral += (current_error + last_error) * time_elapsed /2.f;
 	}
+	
+	
+	// output is computed with current proportional and derivative data. integral data, however, is at least 1 cycle behind
+	// This output will only be realeased if l
+	output = Kp*current_error + Ki*integral - Kd* (current_error-last_error)/time_elapsed;
+
+	
+	
+	//something went wrong with pilot or sensor data collection, output the last know stable output
+	if ( (output > output_upper_limit) || (output < output_lower_limit)) {
+		
+		return last_output;			
+	}
+	
+	
+	// all is normal, update the integral and compute the derivative and the proportiona term
+
+	
+
+	last_output = output;	
 
 
-	// otherwise, update the integral
-	integral += (current_error + last_error) * time_elapsed /2.f;
+	
+	crap = set_point;	
+	crap = time_elapsed;
+	crap = feedback_input;	
+	crap = integral;
+	crap = derivative;
+	crap = (current_error + last_error) * time_elapsed /2.f;
+	crap = current_error;
+	crap = output;
 			
 			
+	
 	return output;
 }
 
@@ -130,6 +142,10 @@ void PID::combine_data(float bank_number, float pitch_number, float throttle_per
 
 	//heavily depends on how the accelerometer and gyro are pointed and how the motors are plugged in.
 	
+	static uint16_t cnt = 0;
+	cnt ++;
+	
+	volatile float crap;
 
 	motor[0] = (int) (bank_number + pitch_number) * throttle_percentage / 200 ;
 
@@ -139,7 +155,13 @@ void PID::combine_data(float bank_number, float pitch_number, float throttle_per
 
 	motor[3] = (int) (-bank_number - pitch_number) * throttle_percentage / 200;
 
-
+	crap = bank_number;
+	crap = pitch_number;
+	crap = throttle_percentage;
+	crap = motor[0];
+	crap = motor[1];
+	crap = motor[2];
+	crap = motor[3];
 }
 
 int* PID::get_motor(){ return motor; }

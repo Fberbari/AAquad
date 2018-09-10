@@ -173,10 +173,18 @@ float sensors:: get_time(){
 
 float sensors::get_pitch() const{
 	
+		volatile float crap_pitch;
+	
+	crap_pitch = roll;
+	
 	return pitch;
 }
 
 float sensors::get_roll() const{
+	
+	volatile float crap_roll;
+	
+	crap_roll = roll;
 	
 	return roll;
 }
