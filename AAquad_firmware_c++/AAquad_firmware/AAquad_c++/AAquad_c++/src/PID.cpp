@@ -10,6 +10,8 @@ PID::PID(){
     integral = 0;
 }
         
+// initialisation of this satic array		
+int PID::motor[4] = {0};
 
 
 void PID::setWeights(const float &Kp, const float &Ki, const float &Kd) {
@@ -63,7 +65,7 @@ float PID::refresh(const float &feedback_input) {
 	
 	
 	// Same with the derivative
-	if ( fabs((current_error-last_error)/time_elapsed) < 10 ){
+	if ( fabs((current_error-last_error)/time_elapsed) < 20 ){
 		
 		derivative = (current_error-last_error)/time_elapsed;
 	}
@@ -82,7 +84,7 @@ float PID::refresh(const float &feedback_input) {
 	
 	else if (output > output_upper_limit){
 		
-		output= output_upper_limit;
+		output = output_upper_limit;
 	}
 	
 		
@@ -139,4 +141,3 @@ void PID::combine_data(float bank_percentage, float pitch_percentage, float thro
 
 }
 
-int* PID::get_motor() const{ return motor; }

@@ -21,7 +21,6 @@
 */
 #include <util/delay.h>
 
-	int motors[4] = {0};
 
 	volatile uint16_t requested_aileron_pos = 0;
 	volatile uint16_t temp_timer_aileron = 0; // holds the time signature of the previous edge in the PWM capture
@@ -35,16 +34,12 @@
 	volatile uint16_t requested_throttle_pos = 0;
 	volatile uint16_t temp_timer_throttle = 0; 
 
-	volatile uint16_t temp0;
-	
 
 int main(void){
 
 	initialize::timers();
 	initialize::interrupts();
 	
-
-	I2C_328pb i2c(0xAA); // 
 	
 	pilot_instructions pilot;
 	pilot.set_max_angle(30);
@@ -52,25 +47,27 @@ int main(void){
 
 	
 
-	I2C_328pb sensor_I2C(0xAA);	// object created just for use in the sensor object
+	I2C_328pb sensor_I2C(0xAA);	// I2C object created just for use in the sensor object
 	sensors sense(sensor_I2C);
 
 	PID bank_pid;
-	bank_pid.setWeights(0.5,0.5,0.5);
+	bank_pid.setWeights(1.5,0.05,0.05);
 	bank_pid.setOutputLowerLimit(-50);
 	bank_pid.setOutputUpperLimit(50);
 
 	PID pitch_pid;
-	pitch_pid.setWeights(0.5,0.5,0.5);
+	pitch_pid.setWeights(1.5,0.05,0.5);
 	pitch_pid.setOutputLowerLimit(-50);
 	pitch_pid.setOutputUpperLimit(50);
 	
 
 
 	I2C_328pb pwm_chip_I2c(0xAA);
-	pwm_chip pwm(pwm_chip_I2c, 10);
+	pwm_chip pwm(pwm_chip_I2c, 100);
 
 	sei();
+	
+	// Initialisation finished. Interupts enabled.
 	
 
 	
@@ -78,27 +75,22 @@ int main(void){
 		
 			
 		sense.read_acc(sensor_I2C);
-		sense.read_gyro(sensor_I2C);	// all sensor data processed
-	
-		sense.compute_position();
-		
-		pilot.compute();	// all pilot data processed
-		
-		
+		sense.read_gyro(sensor_I2C);	
+		sense.compute_position();// all sensor data received and processed by now
 		
 	
-		bank_pid.setDesiredPoint(pilot.get_bank_angle());
-
+		pilot.compute();	// all pilot data received and processed
+		
+	
+		bank_pid.setDesiredPoint(pilot.get_bank_angle());	// pilot commands passed to PID object
 		pitch_pid.setDesiredPoint(pilot.get_pitch_angle());
-	/*
-		PID::combine_data(bank_pid.refresh(sense.get_roll()), pitch_pid.refresh(sense.get_pitch), pilot.get_throttle_power());
-	*/
-
-	/*
-		pwm.pass(pwm_chip_I2c, motors);	
-	*/	
-		_delay_ms(10);
 	
+	
+		PID::combine_data(bank_pid.refresh(sense.get_roll()), pitch_pid.refresh(sense.get_pitch()), pilot.get_throttle_power());	// all data processed into individual motor percentages
+	
+
+		pwm.pass(pwm_chip_I2c, PID::motor);	// data encoded into PWM chip language and sent to the esc's
+
 	}
 
 
@@ -135,22 +127,22 @@ ISR(INT0_vect){
 
 ISR(INT1_vect){
 	
-		temp0 = TCNT1;
+		uint16_t temp = TCNT1;
 		
 
-		if ( temp0 < temp_timer_throttle){	// timer overflow
+		if ( temp < temp_timer_throttle){	// timer overflow
 
-			requested_throttle_pos = (0xffff - temp_timer_throttle) + temp0 ;
+			requested_throttle_pos = (0xffff - temp_timer_throttle) + temp ;
 		}
 
 		else {	// regular case
 	
-			requested_throttle_pos = temp0 - temp_timer_throttle;
+			requested_throttle_pos = temp - temp_timer_throttle;
 			
 		}
 	
 		
-		temp_timer_throttle = temp0;
+		temp_timer_throttle = temp;
 		
 		
 		// here, there is a chance that the value stored in requested throttle is actually (0xffff - actual requested throttle) this needs to be fixed in the while loop, it has been avoided here to kep the ISR short.

@@ -61,10 +61,11 @@ class PID {
             // Call it like PID::combine_data
             // currently does nothing with yaw_rate
             static void combine_data(float bank_percentage, float pitch_percentage, float throttle_percentage);
-
-            // returns the pointer to the motors array for use in the Pwm class
-            int* get_motor() const;
-
+            
+			
+			// holds the percentage of full power that each individual motor needs to be at. This needs to be read for full output
+            // this array will be read by the pilot for info
+            static int motor[4];  
         private:
 
 
@@ -84,9 +85,7 @@ class PID {
             float output_upper_limit;
             float output_lower_limit;
 
-            // holds the percentage of full power that each individual motor needs to be at. This needs to be read for full output
-            // this array will be read by the pilot for info
-            static int motor[4];  
+
             
 
             float time_elapsed;
