@@ -49,6 +49,7 @@ float PID::refresh(const float &feedback_input) {
 
 	update_time();	// get the time for integral and derivative purposes
 
+<<<<<<< HEAD
 	
 	
 	last_error = current_error;// this happens no matter what, every cycle
@@ -82,6 +83,48 @@ float PID::refresh(const float &feedback_input) {
 	// all is normal, update the integral and compute the derivative and the proportiona term
 	last_output = output;	
 			
+=======
+		
+	last_error = current_error;
+	last_output = output;		
+	
+	current_error = set_point - feedback_input;	
+	
+	
+	
+	// To orevet corruptig he integral with noise spikes, updates willonly be made if they are reasonable
+	if (  fabs((current_error + last_error) * time_elapsed /2.f) < 1 ){
+		
+		integral += (current_error + last_error) * time_elapsed /2.f;
+	}
+	
+	
+	// Same with the derivative
+	if ( fabs((current_error-last_error)/time_elapsed) < 10 ){
+		
+		derivative = (current_error-last_error)/time_elapsed;
+	}
+	
+	
+	// calculate the new output
+	output = Kp*current_error + Ki*integral + Kd* (current_error-last_error)/time_elapsed;	
+
+
+
+	// checks wether output is maxed in either direction
+	if (output < output_lower_limit){
+		
+		output = output_lower_limit;
+	}
+	
+	else if (output > output_upper_limit){
+		
+		output= output_upper_limit;
+	}
+	
+		
+		
+>>>>>>> master
 			
 	
 	return output;
