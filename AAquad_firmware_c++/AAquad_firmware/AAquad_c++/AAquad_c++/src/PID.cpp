@@ -49,43 +49,44 @@ float PID::refresh(const float &feedback_input) {
 
 		
 	last_error = current_error;
-		
+	last_output = output;		
+	
 	current_error = set_point - feedback_input;	
 	
 	
-	last_output = output;	
 	
-
-	// the derivative is computed in this line
-	// the integral, however, was computed one cycle ago
-	output = Kp*current_error + Ki*integral + Kd* (current_error-last_error)/time_elapsed;	// calculate the new output
+	// To orevet corruptig he integral with noise spikes, updates willonly be made if they are reasonable
+	if (  fabs((current_error + last_error) * time_elapsed /2.f) < 1 ){
 		
-		
-
-	if ( (output > output_upper_limit) || (output < output_lower_limit)) {
-
-			
-		if (fabs(Ki*integral) > fabs(current_error)) {	// integral wind up, do not update the integral further
-
-				
-			if (output > output_upper_limit){
-
-				return output_upper_limit;	
-			}
-
-
-			else if (output < output_lower_limit){
-
-				return output_lower_limit;
-			}
-				
-		}
+		integral += (current_error + last_error) * time_elapsed /2.f;
 	}
+	
+	
+	// Same with the derivative
+	if ( fabs((current_error-last_error)/time_elapsed) < 10 ){
+		
+		derivative = (current_error-last_error)/time_elapsed;
+	}
+	
+	
+	// calculate the new output
+	output = Kp*current_error + Ki*integral + Kd* (current_error-last_error)/time_elapsed;	
 
 
-	// otherwise, update the integral
-	integral += (current_error + last_error) * time_elapsed /2.f;
-			
+
+	// checks wether output is maxed in either direction
+	if (output < output_lower_limit){
+		
+		output = output_lower_limit;
+	}
+	
+	else if (output > output_upper_limit){
+		
+		output= output_upper_limit;
+	}
+	
+		
+		
 			
 	return output;
 }

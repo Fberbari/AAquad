@@ -74,11 +74,12 @@ class PID {
 
 		float current_error;
             float last_error;
-            float last_output;
             float output;
+			float last_output;
             float set_point;
             float Kp, Ki, Kd;
             float integral;
+			float derivative;
             float interval;
             float output_upper_limit;
             float output_lower_limit;
