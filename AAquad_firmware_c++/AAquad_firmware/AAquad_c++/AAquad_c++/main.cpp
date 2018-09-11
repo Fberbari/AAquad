@@ -21,8 +21,6 @@
 */
 #include <util/delay.h>
 
-	int motors[4] = {0};
-
 	volatile uint16_t requested_aileron_pos = 0;
 	volatile uint16_t temp_timer_aileron = 0; // holds the time signature of the previous edge in the PWM capture
 
@@ -37,13 +35,12 @@
 
 	volatile uint16_t temp0;
 	
-	int cnt = 0;
 
 int main(void){
 
 	initialize::timers();
 	initialize::interrupts();
-/*	
+
 	
 	pilot_instructions pilot;
 	pilot.set_max_angle(30);
@@ -64,7 +61,7 @@ int main(void){
 	pitch_pid.setOutputLowerLimit(-50);
 	pitch_pid.setOutputUpperLimit(50);
 	
-*/
+
 
 
 
@@ -77,7 +74,7 @@ int main(void){
 	
 	while(1){
 		
-/*			
+	
 		sense.read_acc(sensor_I2C);
 		sense.read_gyro(sensor_I2C);	// all sensor data processed
 	
@@ -89,27 +86,15 @@ int main(void){
 		
 	
 		bank_pid.setDesiredPoint(pilot.get_bank_angle());
-
 		pitch_pid.setDesiredPoint(pilot.get_pitch_angle());
+		
 		PID::combine_data(bank_pid.refresh(sense.get_roll()), pitch_pid.refresh(sense.get_pitch), pilot.get_throttle_power());
-	*/
 
 
-		for (int i = 0; i <4; i++){
-		
-			motors[i] = cnt;
-		}
+
 	
-		pwm.pass(pwm_chip_I2c, motors);	
+		pwm.pass(pwm_chip_I2c, PID::get_motor());	
 		
-		cnt ++;
-		
-		if (cnt == 100){
-			
-			cnt = 0;
-		}
-	}
-
 
 
 return 0;
