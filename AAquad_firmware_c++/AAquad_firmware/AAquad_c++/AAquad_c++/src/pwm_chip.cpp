@@ -6,6 +6,8 @@ pwm_chip::pwm_chip(I2C_328pb i2c, uint8_t prescaler){
 	
 	
 	DDRB |= (1 << 2);	// set OE to 0;
+	
+	PORTC |= ( (1 << 4) | (1 << 5) );
 
 	//This function sets the auto increment, the prescaler and any other necessary feature required for the pwm chip to run 
 

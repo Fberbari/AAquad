@@ -37,14 +37,13 @@
 
 	volatile uint16_t temp0;
 	
+	int cnt = 0;
 
 int main(void){
 
 	initialize::timers();
 	initialize::interrupts();
-	
-
-	I2C_328pb i2c(0xAA); // 
+/*	
 	
 	pilot_instructions pilot;
 	pilot.set_max_angle(30);
@@ -65,9 +64,11 @@ int main(void){
 	pitch_pid.setOutputLowerLimit(-50);
 	pitch_pid.setOutputUpperLimit(50);
 	
+*/
 
 
-	I2C_328pb pwm_chip_I2c(0xAA);
+
+	I2C_328pb pwm_chip_I2c(0x02);
 	pwm_chip pwm(pwm_chip_I2c, 10);
 
 	sei();
@@ -76,7 +77,7 @@ int main(void){
 	
 	while(1){
 		
-			
+/*			
 		sense.read_acc(sensor_I2C);
 		sense.read_gyro(sensor_I2C);	// all sensor data processed
 	
@@ -90,15 +91,23 @@ int main(void){
 		bank_pid.setDesiredPoint(pilot.get_bank_angle());
 
 		pitch_pid.setDesiredPoint(pilot.get_pitch_angle());
-	/*
 		PID::combine_data(bank_pid.refresh(sense.get_roll()), pitch_pid.refresh(sense.get_pitch), pilot.get_throttle_power());
 	*/
 
-	/*
-		pwm.pass(pwm_chip_I2c, motors);	
-	*/	
-		_delay_ms(10);
+
+		for (int i = 0; i <4; i++){
+		
+			motors[i] = cnt;
+		}
 	
+		pwm.pass(pwm_chip_I2c, motors);	
+		
+		cnt ++;
+		
+		if (cnt == 100){
+			
+			cnt = 0;
+		}
 	}
 
 
