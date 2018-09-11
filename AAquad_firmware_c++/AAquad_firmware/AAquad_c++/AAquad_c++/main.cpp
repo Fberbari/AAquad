@@ -91,9 +91,7 @@ int main(void){
 		bank_pid.setDesiredPoint(pilot.get_bank_angle());
 		pitch_pid.setDesiredPoint(pilot.get_pitch_angle());
 	
-	//crap[0] = (int) bank_pid.refresh(sense.get_roll());
-	//crap[1] =(int) pitch_pid.refresh(sense.get_pitch());
-	
+
 	PID::combine_data( bank_pid.refresh(sense.get_roll() ), pitch_pid.refresh(sense.get_pitch() ), pilot.get_throttle_power() );
 	
 

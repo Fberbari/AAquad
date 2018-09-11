@@ -49,9 +49,6 @@ float PID::refresh(const float &feedback_input) {
 
 	update_time();	// get the time for integral and derivative purposes
 
-	volatile float crap; 
-	static int cnt = 0;
-	cnt++;
 	
 	
 	last_error = current_error;// this happens no matter what, every cycle
@@ -83,21 +80,7 @@ float PID::refresh(const float &feedback_input) {
 	
 	
 	// all is normal, update the integral and compute the derivative and the proportiona term
-
-	
-
 	last_output = output;	
-
-
-	
-	crap = set_point;	
-	crap = time_elapsed;
-	crap = feedback_input;	
-	crap = integral;
-	crap = derivative;
-	crap = (current_error + last_error) * time_elapsed /2.f;
-	crap = current_error;
-	crap = output;
 			
 			
 	
