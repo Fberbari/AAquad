@@ -50,6 +50,13 @@ float PID::refresh(const float &feedback_input) {
 	update_time();	// get the time for integral and derivative purposes
 
 
+	if ((fabs(set_point) > 100) || (fabs(feedback_input) > 100)){
+		
+		return output;
+	}
+
+
+
 	volatile float crap;
 
 		
@@ -75,7 +82,7 @@ float PID::refresh(const float &feedback_input) {
 	
 	
 	// calculate the new output
-	output = Kp*current_error; /* + Ki*integral + Kd* derivative;	*/
+	output = Kp*current_error + Ki*integral + Kd* derivative;
 
 	crap = set_point;
 	crap = feedback_input;
@@ -90,8 +97,8 @@ float PID::refresh(const float &feedback_input) {
 		
 		output = last_output;
 	}
-
 */
+
 	// check wether output is maxed in either direction
 	if (output < output_lower_limit){
 		

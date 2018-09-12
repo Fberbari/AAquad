@@ -48,12 +48,12 @@ int main(void){
 	sensors sense(sensor_I2C);
 
 	PID bank_pid;
-	bank_pid.setWeights(1.5,0.05,0.05);
+	bank_pid.setWeights(2,0.08,0.05);
 	bank_pid.setOutputLowerLimit(-50);
 	bank_pid.setOutputUpperLimit(50);
 
 	PID pitch_pid;
-	pitch_pid.setWeights(1.5,0.05,0.5);
+	pitch_pid.setWeights(2,0.08,0.05);
 	pitch_pid.setOutputLowerLimit(-50);
 	pitch_pid.setOutputUpperLimit(50);
 	
@@ -86,7 +86,7 @@ int main(void){
 		pitch_pid.setDesiredPoint(pilot.get_pitch_angle());
 	
 	
-		PID::combine_data(bank_pid.refresh(sense.get_roll()), pitch_pid.refresh(sense.get_pitch()), pilot.get_throttle_power());	// all data processed into individual motor percentages
+		PID::combine_data(bank_pid.refresh(sense.get_roll()), pitch_pid.refresh(sense.get_pitch()), 60);	// all data processed into individual motor percentages
 
 
 		pwm.pass(pwm_chip_I2c, PID::motor);	// data encoded into PWM chip language and sent to the esc's
