@@ -39,21 +39,24 @@ uint8_t pilot_instructions::get_throttle_power() const{
 
 void pilot_instructions::compute(void){
 
-
+	
 	extern volatile uint16_t requested_aileron_pos;
 	extern volatile uint16_t requested_elevator_pos;
 	extern volatile uint16_t requested_rudder_pos;
 	extern volatile uint16_t requested_throttle_pos;
 
+	// so the math doesent get fucked up, stop interrupts dring this process
+	cli();
+
 
 	// 50% of the time the value read is actually the valley of the pwm, that is corrected here 
 
-	if (requested_aileron_pos > 0x7000 ){
+	if ( *((uint8_t*)&(requested_aileron_pos)+1) > 0x9){
 			
 		requested_aileron_pos = 0xffff - requested_aileron_pos;
 	}
 
-	if (requested_elevator_pos > 0x7000 ){
+	if ( *((uint8_t*)&(requested_elevator_pos)+1) > 0x9 ){
 			
 		requested_elevator_pos = 0xffff - requested_elevator_pos;
 	}
@@ -78,7 +81,7 @@ void pilot_instructions::compute(void){
 	//yaw_rate = ( requested_rudder_pos / 6553 ) * max_yaw_rate;	// computes the percentage of the max the pilot wants
 	
 	
-	float temp_pitch_angle = (requested_elevator_pos - 1110.f);	// computes the percentage of the max the pilot wants
+	volatile float temp_pitch_angle = (requested_elevator_pos - 1110.f);	// computes the percentage of the max the pilot wants
 	temp_pitch_angle /= 800;
 	temp_pitch_angle *= 2 * max_angle;
 	temp_pitch_angle -= max_angle;
@@ -86,10 +89,12 @@ void pilot_instructions::compute(void){
 	
 	
 
-	float temp_bank_angle = (requested_aileron_pos - 1120.f);	// computes the percentage of the max the pilot wants
+	volatile float temp_bank_angle = (requested_aileron_pos - 1120);	// computes the percentage of the max the pilot wants
 	temp_bank_angle /= 800;
 	temp_bank_angle *= 2 * max_angle;
 	temp_bank_angle -= max_angle;
 	bank_angle = (int) temp_bank_angle + 2;
+	
+	sei();
 
 }

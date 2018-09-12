@@ -176,3 +176,6 @@ SOFTWARE
 	solved: the #ifndef, #def i used had the same name as the class so the preprocessor was messing stuff up. 
 
 
+2. Trying to compare 2 16 bit numbers is very problematic and the compiler cannot handle it cannot handle it.
+
+	-you must split the registers manually in a 16 bitter.use *((uint8_t*)&(value)+1);

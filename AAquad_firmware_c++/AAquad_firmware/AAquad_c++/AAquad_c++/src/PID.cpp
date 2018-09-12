@@ -75,10 +75,23 @@ float PID::refresh(const float &feedback_input) {
 	
 	
 	// calculate the new output
-	output = Kp*current_error + Ki*integral + Kd* (current_error-last_error)/time_elapsed;	
+	output = Kp*current_error; /* + Ki*integral + Kd* derivative;	*/
 
+	crap = set_point;
+	crap = feedback_input;
+	crap = last_output;
+	crap = output;
+	crap = (output-last_output);
+	crap /= last_output;
+	
+/*
+	// in an effort to reduce noise, we can eliminate any output that is 5% different or more from the current output
+	if (fabs((output-last_output)/last_output) > 0.5){
+		
+		output = last_output;
+	}
 
-
+*/
 	// check wether output is maxed in either direction
 	if (output < output_lower_limit){
 		
