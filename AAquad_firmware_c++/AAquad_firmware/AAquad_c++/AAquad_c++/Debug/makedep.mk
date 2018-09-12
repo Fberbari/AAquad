@@ -4,6 +4,8 @@
 
 main.cpp
 
+src\calc.cpp
+
 src\I2C_328pb.cpp
 
 src\init.cpp

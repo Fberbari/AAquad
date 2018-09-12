@@ -172,6 +172,9 @@
     <Compile Include="header_files\avr_compiler.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="header_files\calc.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="header_files\I2C_328pb.h">
       <SubType>compile</SubType>
     </Compile>
@@ -194,6 +197,9 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="main.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\calc.cpp">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\I2C_328pb.cpp">

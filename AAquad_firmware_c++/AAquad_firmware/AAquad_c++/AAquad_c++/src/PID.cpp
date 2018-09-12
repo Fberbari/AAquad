@@ -49,6 +49,9 @@ float PID::refresh(const float &feedback_input) {
 
 	update_time();	// get the time for integral and derivative purposes
 
+
+	volatile float crap;
+
 		
 	last_error = current_error;
 	last_output = output;		
@@ -76,7 +79,7 @@ float PID::refresh(const float &feedback_input) {
 
 
 
-	// checks wether output is maxed in either direction
+	// check wether output is maxed in either direction
 	if (output < output_lower_limit){
 		
 		output = output_lower_limit;
@@ -87,7 +90,10 @@ float PID::refresh(const float &feedback_input) {
 		output = output_upper_limit;
 	}
 	
-		
+	crap = output;
+	crap = integral;
+	crap = derivative;
+	crap = current_error;
 		
 			
 	return output;
@@ -130,14 +136,25 @@ void PID::update_time(){
 void PID::combine_data(float bank_percentage, float pitch_percentage, float throttle_percentage){
 
 	//heavily depends on how the accelerometer and gyro are pointed and how the motors are plugged in.
-
 	motor[0] = (int) (bank_percentage + pitch_percentage) * throttle_percentage / 200 ;
-
 	motor[1] = (int) (bank_percentage - pitch_percentage) * throttle_percentage / 200 ;
-
 	motor[2] = (int) (-bank_percentage + pitch_percentage) * throttle_percentage / 200;
-
 	motor[3] = (int) (-bank_percentage - pitch_percentage) * throttle_percentage / 200;
+	
+	
+	// numbers were in the range [-50, 50], this effectively turns them into a percentage
+	motor[0] += 50;
+	motor[1] += 50;
+	motor[2] += 50;
+	motor[3] += 50;
+	
+	volatile int crap = motor[0];
+	crap = motor[1];
+	crap = motor[2];
+	crap = motor[3];
+	
 
 }
+
+
 

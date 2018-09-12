@@ -16,9 +16,6 @@
 #include "pwm_chip.h"
 #include "sensors.h"
 #include "PID.h"
-/*
-#include "PID.h"
-*/
 #include <util/delay.h>
 
 
@@ -62,9 +59,12 @@ int main(void){
 	
 
 
-	I2C_328pb pwm_chip_I2c(0xAA);
-	pwm_chip pwm(pwm_chip_I2c, 100);
+	I2C_328pb pwm_chip_I2c(0x02);
+	pwm_chip pwm(pwm_chip_I2c, 10);
+	
 
+	
+	
 	sei();
 	
 	// Initialisation finished. Interupts enabled.
@@ -73,7 +73,7 @@ int main(void){
 	
 	while(1){
 		
-			
+		
 		sense.read_acc(sensor_I2C);
 		sense.read_gyro(sensor_I2C);	
 		sense.compute_position();// all sensor data received and processed by now
@@ -87,7 +87,7 @@ int main(void){
 	
 	
 		PID::combine_data(bank_pid.refresh(sense.get_roll()), pitch_pid.refresh(sense.get_pitch()), pilot.get_throttle_power());	// all data processed into individual motor percentages
-	
+
 
 		pwm.pass(pwm_chip_I2c, PID::motor);	// data encoded into PWM chip language and sent to the esc's
 

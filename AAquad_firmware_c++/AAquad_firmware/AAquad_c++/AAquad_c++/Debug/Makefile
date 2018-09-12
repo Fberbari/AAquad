@@ -40,6 +40,7 @@ SUBDIRS :=  \
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
 ../main.cpp \
+../src/calc.cpp \
 ../src/I2C_328pb.cpp \
 ../src/init.cpp \
 ../src/PID.cpp \
@@ -56,6 +57,7 @@ ASM_SRCS +=
 
 OBJS +=  \
 main.o \
+src/calc.o \
 src/I2C_328pb.o \
 src/init.o \
 src/PID.o \
@@ -65,6 +67,7 @@ src/sensors.o
 
 OBJS_AS_ARGS +=  \
 main.o \
+src/calc.o \
 src/I2C_328pb.o \
 src/init.o \
 src/PID.o \
@@ -74,6 +77,7 @@ src/sensors.o
 
 C_DEPS +=  \
 main.d \
+src/calc.d \
 src/I2C_328pb.d \
 src/init.d \
 src/PID.d \
@@ -83,6 +87,7 @@ src/sensors.d
 
 C_DEPS_AS_ARGS +=  \
 main.d \
+src/calc.d \
 src/I2C_328pb.d \
 src/init.d \
 src/PID.d \
@@ -104,6 +109,8 @@ LINKER_SCRIPT_DEP+=
 
 
 # AVR32/GNU C Compiler
+
+
 
 
 
