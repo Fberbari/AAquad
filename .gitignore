@@ -1,5 +1,10 @@
 
-
+AAquad_code
+AAquad_firmware
+digikey-kicad-library
+parts(includes_Buzzerboxes).csv
+"things that must be handled.txt"
+troubleshooting.txt
 AAquad_firmware\AAquad_firmware.atsln
 AAquad_firmware\AAquad_firmware\Debug
 AAquad_firmware\AAquad_c++\AAquad_c++.atsln
