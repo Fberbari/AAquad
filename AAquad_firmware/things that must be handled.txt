@@ -1,0 +1,2 @@
+1. Adjust bit rate on TWI 
+2. Adjust bandwidth (dps) on gyro and equivalent on acc

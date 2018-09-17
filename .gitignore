@@ -1,10 +1,11 @@
 
 AAquad_code
-AAquad_firmware
+"AAquad_firmware"
 digikey-kicad-library
-parts(includes_Buzzerboxes).csv
+parts(includes_Buzzerboxes).csv  
 "things that must be handled.txt"
 troubleshooting.txt
+"design flaws.txt"
 AAquad_firmware\AAquad_firmware.atsln
 AAquad_firmware\AAquad_firmware\Debug
 AAquad_firmware\AAquad_c++\AAquad_c++.atsln
