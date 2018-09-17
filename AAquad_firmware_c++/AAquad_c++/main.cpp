@@ -64,7 +64,7 @@ int main(void){
 	pitch_pid.setOutputUpperLimit(50);
 	
 
-	// initialisation of the chip responsible fortalking directly to the esc's
+	// initialisation of the chip responsible for talking directly to the esc's
 	I2C_328pb pwm_chip_I2c(0x02);
 	pwm_chip pwm(pwm_chip_I2c, 10);
 	
@@ -99,7 +99,7 @@ int main(void){
 		pitch_pid.setDesiredPoint(pilot.get_pitch_angle());
 	
 		// Combination of pilot and sensor data into individual percentages of full pwer for each motor
-		PID::combine_data(bank_pid.refresh(sense.get_roll()), pitch_pid.refresh(sense.get_pitch()), 60);
+		PID::combine_data(bank_pid.refresh(sense.get_roll()), pitch_pid.refresh(sense.get_pitch()), pilot.get_throttle_power());
 
 		// data encoded into PWM chip language and sent to the esc's
 		pwm.pass(pwm_chip_I2c, PID::motor);	
