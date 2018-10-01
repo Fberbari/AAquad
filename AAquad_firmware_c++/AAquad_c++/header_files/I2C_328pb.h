@@ -5,8 +5,10 @@
 *	This class provides a library of methods I built specifically for the Atmega328pb
 *	For this project, I've commented out the part of the methods that checks the success of the transfer and turned the into voids instead
 *	^ That decision might be reversed once I implement emegency handling functions into the quad.
-*	I also implemented all these methods as polling. A watchdog timer should eventually be implemented in future versions and these should eventually be interrupt based
-*	Objects may be created and passed to any function or class that rwuires I2C communication
+*
+*	I also all these methods as polling, because it is still far quicker than the slowest step od decoding the input pwm. 
+*	A watchdog timer should eventually be implemented in future versions and these should eventually be interrupt based
+*	Objects may be created and passed to any function or class that requires I2C communication
 ************************************************/
 
 #ifndef I2C_328PB 
