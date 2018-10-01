@@ -1,3 +1,0 @@
-1. Adjust bit rate on TWI 
-2. Adjust bandwidth (dps) on gyro and equivalent on acc
-3. find the scaling factors so that the timers can track real time

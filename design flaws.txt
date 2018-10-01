@@ -18,6 +18,7 @@
 
 10. spacing between header pins should fit a breadboard.
 
+11. New and improved algos that you used in numerical analysys should be used to approximate the integral and derivative for the PID
 
 
 
