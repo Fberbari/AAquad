@@ -39,18 +39,18 @@
 
 #define DEGREE_CONVERSION_FACTOR 57.3	// ratio of 180/pi
 
-class sensors{
+class sensors : private I2C_328pb{
 
 	public:
 		
 		//configuration of all the sensors, things like refresh rate, sensitivity selection
-		sensors(I2C_328pb i2c);
+		sensors();
 		
 		
-		// grabbs the 2 Bytes of data for each axis fromthe acc. Raw results are stored in acc_""_data
-		void read_acc(I2C_328pb i2c);
-		// grabbs the 2 Bytes of data for each axis fromthe gyro. Raw results are stored in acc_""_data
-		void read_gyro(I2C_328pb i2c);
+		// grabbs the 2 Bytes of data for each axis from the acc. Raw results are stored in acc_""_data
+		void read_acc();
+		// grabbs the 2 Bytes of data for each axis from the gyro. Raw results are stored in gyro_""_data
+		void read_gyro();
 		
 		
 		// combines the raw data from the acc and gyro in a *smart* way and updates the pitch and roll angles. Also produces the yaw rate.

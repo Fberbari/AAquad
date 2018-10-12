@@ -10,15 +10,15 @@
 ***************************************************************/
 
 
-class pwm_chip{
+class pwm_chip : private I2C_328pb{
 
 public:
 	
 	// takes care of all initialisation including setting the period of pwm
-	pwm_chip(I2C_328pb i2c, uint8_t prescaler);
+	pwm_chip(uint8_t prescaler);
 
 	// sends all data to the esc's
-	void pass(I2C_328pb i2c, int* motors);
+	void pass(int* motors);
 
 
 

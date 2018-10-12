@@ -39,18 +39,20 @@ int main(void){
 	initialize::timers();
 	initialize::interrupts();
 	
-	// this class will handleall the pilot's wishes
+	// gathers and processes the pilot's wishes
 	pilot_instructions pilot;
 	pilot.set_max_angle(30);
 	pilot.set_max_yaw_rate(45);
-
 	
-	// I2C object created just for use in the sensor object
-	//handles all sensor data processing
-	I2C_328pb sensor_I2C(0x02);	
-	sensors sense(sensor_I2C);
+	//handles all sensor data gathering and processing
+	sensors sense;
+	
+	// initialisation of the chip responsible for talking directly to the esc's
+	pwm_chip pwm(121);
 
-	// processes current position and rqueste position into a number proportional to motor strength
+
+
+	// processes current position and requested position into a number proportional to motor strength
 	// This is only for the bank (tilted left or right) angle
 	PID bank_pid;
 	bank_pid.setWeights(2,0.08,0.05);
@@ -64,9 +66,7 @@ int main(void){
 	pitch_pid.setOutputUpperLimit(50);
 	
 
-	// initialisation of the chip responsible for talking directly to the esc's
-	I2C_328pb pwm_chip_I2c(0x02);
-	pwm_chip pwm(pwm_chip_I2c, 10);
+
 	
 
 	
@@ -80,19 +80,14 @@ int main(void){
 	while(1){
 		
 		// sensor data gathered
-		sense.read_acc(sensor_I2C);
-		sense.read_gyro(sensor_I2C);
+		sense.read_acc();
+		sense.read_gyro();
 			
 		// all sensor data received and processed
 		sense.compute_position();
-		
-	
-	
 	
 		// all pilot data received and processed
 		pilot.compute();	
-		
-	
 	
 		// pilot commands passed to PID object
 		bank_pid.setDesiredPoint(pilot.get_bank_angle());	
@@ -102,7 +97,7 @@ int main(void){
 		PID::combine_data(bank_pid.refresh(sense.get_roll()), pitch_pid.refresh(sense.get_pitch()), pilot.get_throttle_power());
 
 		// data encoded into PWM chip language and sent to the esc's
-		pwm.pass(pwm_chip_I2c, PID::motor);	
+		pwm.pass(PID::motor);	
 
 	}
 

@@ -2,25 +2,25 @@
 
 
 
-sensors::sensors(I2C_328pb i2c){
+sensors::sensors() : I2C_328pb(0x10){
 
-	i2c.start(); 
-	i2c.send_slave(0x32);	// acc slave + w
-	i2c.send_reg(0xA0);	// Control register 1 + autoincrement
-	i2c.send(0x67);	// all axis enable data refresh rate is 200Hz
-	i2c.send(0x0);	// CR2 default values
-	i2c.send(0x0);	// CR3 default values
-	i2c.send(0x10);	// CR4  +- 4g and 8mg/digit, The value 32767 corresponds to 4 g's
-	i2c.stop();
+	start(); 
+	send_slave(0x32);	// acc slave + w
+	send_reg(0xA0);	// Control register 1 + autoincrement
+	send(0x67);	// all axis enable data refresh rate is 200Hz
+	send(0x0);	// CR2 default values
+	send(0x0);	// CR3 default values
+	send(0x10);	// CR4  +- 4g and 8mg/digit, The value 32767 corresponds to 4 g's
+	stop();
 	
 
 ////////////////////////////// accelerometer init above and gyro init below
 
-	i2c.start();
-	i2c.send_slave(0xD6); // gyro slave + w
-	i2c.send_reg(0x20);	// Control register 1
-	i2c.send(0x0F);	// all axis enable data refresh rate is 100Hz (a lot of other params also affected)
-	i2c.stop();
+	start();
+	send_slave(0xD6); // gyro slave + w
+	send_reg(0x20);	// Control register 1
+	send(0x0F);	// all axis enable data refresh rate is 100Hz (a lot of other params also affected)
+	stop();
 
 			// default sensitivity is 8.75 mdps/digit
 			
@@ -35,63 +35,63 @@ sensors::sensors(I2C_328pb i2c){
 
 
 
-void sensors::read_acc(I2C_328pb i2c){
+void sensors::read_acc(){
 
-	i2c.start(); 
-	i2c.send_slave(0x32);	// acc slave + w
-	i2c.send(0xA8);	// X_low +auto increment
-	i2c.repeat_start();
-	i2c.send_slave(0x33);	// acc slave + r
+	start(); 
+	send_slave(0x32);	// acc slave + w
+	send(0xA8);	// X_low +auto increment
+	repeat_start();
+	send_slave(0x33);	// acc slave + r
 
-	i2c.get_next_byte();
+	get_next_byte();
 	acc_x_data = TWDR0;	// read low byte
-	i2c.get_next_byte();
+	get_next_byte();
 	acc_x_data |= (TWDR0 << 8);	// read high byte
-	i2c.get_next_byte();
+	get_next_byte();
 
 
 	acc_y_data = TWDR0;	// read low byte
-	i2c.get_next_byte();
+	get_next_byte();
 	acc_y_data |= (TWDR0 << 8);	// read high byte
-	i2c.get_next_byte();
+	get_next_byte();
 
 
 	acc_z_data = TWDR0;	// read low byte
-	i2c.get_next_byte();
+	get_next_byte();
 	acc_z_data |= (TWDR0 << 8);	// read high byte
 
 
-	i2c.end_data_read();
-	i2c.stop();
+	end_data_read();
+	stop();
 }
 
-void sensors::read_gyro(I2C_328pb i2c){
+void sensors::read_gyro(){
 
-	i2c.start(); 
-	i2c.send_slave(0xD6);	// gyro slave + w
-	i2c.send(0xA8);	// X_low +auto increment
-	i2c.repeat_start();
-	i2c.send_slave(0xD7);	// gyro slave + r
+	start(); 
+	send_slave(0xD6);	// gyro slave + w
+	send(0xA8);	// X_low +auto increment
+	repeat_start();
+	send_slave(0xD7);	// gyro slave + r
 
-	i2c.get_next_byte();
+	get_next_byte();
 	gyro_x_data = TWDR0;	// read low byte
-	i2c.get_next_byte();
+	get_next_byte();
 	gyro_x_data |= (TWDR0 << 8);	// read high byte
-	i2c.get_next_byte();
+	get_next_byte();
 
 
 	gyro_y_data = TWDR0;	// read low byte
-	i2c.get_next_byte();
+	get_next_byte();
 	gyro_y_data |= (TWDR0 << 8);	// read high byte
-	i2c.get_next_byte();
+	get_next_byte();
 
   
 	gyro_z_data = TWDR0;	// read low byte
-	i2c.get_next_byte();
+	get_next_byte();
 	gyro_z_data |= (TWDR0 << 8);	// read high byte
 
-	i2c.end_data_read();
-	i2c.stop();
+	end_data_read();
+	stop();
 }
 
 
