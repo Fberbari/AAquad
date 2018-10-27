@@ -98,7 +98,7 @@ void I2C_328pb::send(int data){
 
 	TWCR0 = ((1 << TWINT) | (1 << TWEN));
 	
-	while(! (TWCR0 & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
+while(! (TWCR0 & (1 << TWINT)) ); // Hardware will write this to 0 when ready to go
 /*
 	if ( ((TWSR0 & 0xf8) != 0x28) ){ // comfirms that slave has accepted data and sent ACK
 

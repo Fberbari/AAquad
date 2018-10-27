@@ -7,8 +7,8 @@
 ************************************/
 
 
-#ifndef PWM_IN_VARS
-#define PWM_IN_VARS
+#ifndef PWM_IN_VARS_H
+#define PWM_IN_VARS_H
 
 
 extern volatile uint16_t requested_aileron_pos;

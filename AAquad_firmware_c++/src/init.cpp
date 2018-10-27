@@ -26,7 +26,14 @@ void initialize::interrupts(){
 
 void initialize::timers(){
 
-	// by default the timer is set to normal mode
-	TCCR1B |= ( (1 << CS10));	// timer will run without prescaler and willoverrun 15 times/second on a 1MHz clock
+	// Timer 1 is set to just count and start from 0 when overflow
+	// It is used to provide time stamps to the pwm pilot input
+	TCCR1B |= (1 << CS10);	// timer will run with no prescaler
 
+	// Timer 0 is set to raise an interrupt roughly every 0.1 seconds
+	// it will call the pid compute function
+	TCCR0A |= (1 << WGM01);	// CTC mode, timer resets everytime it hits the value set in OCR0A
+	TCCR0B |= ((1 << CS02) | (CS01));	// clock divide by 8
+	TIMSK0 |= (1 << OCIE0A);	// interrupt set to fire when timer matches with the OCROA register
+	OCR0A = 98;
 }

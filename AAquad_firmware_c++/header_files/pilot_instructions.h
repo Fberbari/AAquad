@@ -19,6 +19,8 @@
 class pilot_instructions{
 
 	public:
+		
+
 		// These methods associate this angle with the extreme stick positions on the  
 		void set_max_angle(uint8_t max_angle);
 		void set_max_yaw_rate(uint8_t max_yaw_rate);
@@ -46,7 +48,13 @@ class pilot_instructions{
 		int pitch_angle;// degrees
 		int yaw_rate;	// expressed in degrees per second
 		uint8_t throttle_power; //expressed as a percentage
-
+		
+		
+		// these arays store the previous values
+		float pitch[5];
+		float bank[5];
+		float yaw[5];
+		float throttle[5];
 
 
 };
